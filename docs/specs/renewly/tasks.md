@@ -81,6 +81,7 @@ Sections (fixed list for now): subscription, reminder, savings (tabungan), recur
 - [x] **8.2 Dashboard by section** (section tabs/chips, each section with its own layout: rings for time-based, progress cards for savings, compact rows for reminders), filters in URL, empty states
 - [x] **8.3 Upcoming in 30 days + monthly cost summary**
 - [ ] **8.4 Performance check with 200 seeded items** (note measurements in NOTES.md)
+- [x] **8.5 Home sections cost figure + declutter**
 
 ## Phase 8: Files
 

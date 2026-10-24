@@ -35,6 +35,7 @@
 - 2026-10-24: App routes are `force-dynamic` (per-user data must not be cached).
 - 2026-10-24: Migrations use numeric prefixes (0001_...) instead of timestamps.
 - 2026-10-23: Scheduler = Supabase pg_cron + Edge Function (tentative). Limits to be verified in task 11.1.
+- 2026-10-25 (task 8.5, Home sections cost figure + declutter): Home top is Upcoming only (full width); the old "Monthly subscriptions" panel and the "N items" subtitle are gone. Each section header now shows its monthly cost at the far left, then name and bare count. Figure rules: Subscriptions = exact active monthly total; Recurring purchases = ESTIMATE (`usualPriceMinor x 30.4375 / durationDays`, label "per month (est.)", quantity ignored, nothing shown when no item has a price); Reminders, Warranties = no figure (no cost in the data model); Savings = no figure on purpose (the only monthly number is "needed per month" to hit a deadline, a target and not spend, and it exists only for goals with a deadline, so a sum would be partial and mislead). Currencies stay separate, never converted. The figure follows the displayed list (search, category and section filters), computed per group in `buildDashboard`. FLAGGED FOR YOU: if "usual price" means per unit, or you do not want an estimate on Home, set the recurring branch of `sectionMonthlyCost` to `null`. Copy removed: Home = filter placeholder/"All categories" shortened, no-results body, empty-state icon row and body, compact savings "Saving" label (only when in progress); Alerts = second sentence; Settings = lead, "Preferences"/"Reminders"/"Account" headings, four hint lines, legend and email label shortened (the shortened "Remind me" legend is shared with the item form's reminder days). Errors, confirmations, labels, CTAs and 44px targets kept. Alerts and Settings were seen only through a temporary preview route, not signed in.
 
 ## Assumptions and open questions
 - Python 3.12, Node 24, npm 11, git 2.47 present on this machine.
@@ -56,6 +57,7 @@
 - NOT verified visually: I have no browser here, so layout, colours, the ring fill animation, safe-area padding, focus outlines and the 375px/dark-mode appearance have not been seen. Only the rendered HTML and unit/component tests were checked. Open `/dev/rings` on your phone or in devtools device mode and tell me what looks off.
 - Placeholder pages (/add, /alerts, /settings) are filled in by tasks 6.3, 7.x and 11.6; the shell has no auth guard until task 6.1/6.2.
 
+- NOT verified (8.5): real signed-in Home with real data, the Settings save round trip, a screen reader pass, light scheme (screenshots were dark only), and whether the Settings/Alerts pages felt noisy to you in person (Alerts had one paragraph in code).
 ## How to resume
 1. Read `.kiro/steering/project.md`, this file, `docs/specs/renewly/tasks.md`.
 2. `git log --oneline` and `git status` to see where you are.

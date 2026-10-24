@@ -1,8 +1,8 @@
 import Link from "next/link";
 import { ReminderRow, RingEntry, SavingsEntry } from "@/components/dashboard/entries";
 import { FilterBar } from "@/components/dashboard/filter-bar";
-import { MonthlyCost, Upcoming } from "@/components/dashboard/summary";
-import { SectionIcon } from "@/components/sections/section-icon";
+import { SectionHeader } from "@/components/dashboard/section-header";
+import { Upcoming } from "@/components/dashboard/summary";
 import type { DashboardFilters, DashboardView } from "@/lib/dashboard/view";
 import { ITEM_KINDS } from "@/lib/items/types";
 import { strings } from "@/lib/strings";
@@ -12,31 +12,21 @@ const GRID = "grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-
 interface Props {
   view: DashboardView;
   filters: DashboardFilters;
-  /** How many entries each section chip would show (ignores the section filter). */
   sectionCounts: Record<string, number>;
-  /** Server action factory for the one-tap Done on a reminder row. */
   markDone: (itemId: string) => () => Promise<void>;
-  /** The page the filters belong to. */
   basePath?: string;
 }
 
-/** Summary panels, filters and one block per section, each in its own style. */
 export function DashboardBody({ view, filters, sectionCounts, markDone, basePath = "/" }: Props) {
   return (
     <>
-      <div className="grid gap-4 lg:grid-cols-3">
-        <MonthlyCost totals={view.monthlyTotals} />
-        <div className="lg:col-span-2">
-          <Upcoming entries={view.upcoming} />
-        </div>
-      </div>
+      <Upcoming entries={view.upcoming} />
 
       <FilterBar filters={filters} categories={view.categories} counts={sectionCounts} basePath={basePath} />
 
       {view.shown === 0 ? (
         <div role="status" className="rounded-lg border border-border bg-card p-6 text-center text-card-foreground">
           <h2 className="text-xl font-semibold">{strings.dashboard.noResultsTitle}</h2>
-          <p className="mt-1 text-muted-foreground">{strings.dashboard.noResultsBody}</p>
           <Link href={basePath} className="mt-3 inline-flex min-h-11 items-center underline">
             {strings.dashboard.clear}
           </Link>
@@ -47,15 +37,7 @@ export function DashboardBody({ view, filters, sectionCounts, markDone, basePath
           if (!group) return null;
           return (
             <section key={kind} aria-labelledby={`${kind}-heading`} className="flex flex-col gap-4 border-t border-border pt-6">
-              <h2 id={`${kind}-heading`} className="flex items-center gap-2 text-xl font-semibold text-foreground">
-                <span className="text-secondary">
-                  <SectionIcon kind={kind} size={22} />
-                </span>
-                {strings.item.kinds[kind].plural}
-                <span className="text-base font-normal text-muted-foreground">
-                  {strings.dashboard.sectionCount(group.entries.length)}
-                </span>
-              </h2>
+              <SectionHeader kind={kind} count={group.entries.length} cost={group.cost} />
 
               {kind === "reminder" ? (
                 <ul className="flex flex-col gap-2">

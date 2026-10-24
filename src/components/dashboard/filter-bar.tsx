@@ -9,10 +9,7 @@ import { strings } from "@/lib/strings";
 const CHIP =
   "inline-flex min-h-11 shrink-0 items-center gap-2 rounded-full border px-4 text-sm font-medium transition-colors duration-[var(--duration-fast)]";
 
-/**
- * Section chips plus a search form. Everything is plain links and a GET form,
- * so filters live in the URL and work without JavaScript.
- */
+// Filters live in the URL (plain links + GET form), so they work without JavaScript.
 export function FilterBar({
   filters,
   categories,
@@ -22,7 +19,6 @@ export function FilterBar({
   filters: DashboardFilters;
   categories: string[];
   counts: Partial<Record<string, number>>;
-  /** The page the filters apply to (the dev preview uses its own path). */
   basePath?: string;
 }) {
   const active = filters.section ?? null;
@@ -61,9 +57,9 @@ export function FilterBar({
         </ul>
       </nav>
 
-      <form action={basePath} method="get" role="search" className="flex flex-col gap-3 sm:flex-row sm:items-end">
+      <form action={basePath} method="get" role="search" className="flex flex-wrap items-end gap-3">
         {filters.section ? <input type="hidden" name="section" value={filters.section} /> : null}
-        <div className="flex flex-1 flex-col gap-1">
+        <div className="flex basis-full flex-col gap-1 sm:basis-0 sm:flex-1">
           <label htmlFor="q" className="text-sm font-medium text-foreground">
             {strings.dashboard.searchLabel}
           </label>
@@ -81,7 +77,7 @@ export function FilterBar({
           </div>
         </div>
         {categories.length > 0 ? (
-          <div className="flex flex-col gap-1 sm:w-56">
+          <div className="flex min-w-0 flex-1 flex-col gap-1 sm:w-56 sm:flex-none">
             <label htmlFor="category" className="text-sm font-medium text-foreground">
               {strings.dashboard.categoryLabel}
             </label>
@@ -102,7 +98,7 @@ export function FilterBar({
         ) : null}
         <button
           type="submit"
-          className="min-h-11 rounded-md bg-primary px-6 font-medium text-on-primary hover:opacity-90 active:opacity-80"
+          className="min-h-11 shrink-0 rounded-md bg-primary px-6 font-medium text-on-primary hover:opacity-90 active:opacity-80"
         >
           {strings.dashboard.apply}
         </button>

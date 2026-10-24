@@ -33,6 +33,8 @@ export function SavingsCard({ name, emoji, currency, progress, compact = false }
   const saved = formatMoney(progress.savedMinor, currency);
   const target = formatMoney(progress.targetMinor, currency);
   const stateLabel = strings.savings.state[progress.state];
+  // The default "Saving" state only restates the bar; in lists show just the notable states.
+  const showState = !(compact && progress.state === "in_progress");
 
   return (
     <div className="flex flex-col gap-3 rounded-lg border border-border bg-card p-4 text-card-foreground">
@@ -47,10 +49,12 @@ export function SavingsCard({ name, emoji, currency, progress, compact = false }
           )}
         </span>
         <p className="min-w-0 flex-1 truncate font-semibold">{name}</p>
-        <p className={`flex shrink-0 items-center gap-1 text-sm font-medium ${STATE_TEXT_CLASS[progress.state]}`}>
-          {progress.state === "completed" ? <Target aria-hidden="true" size={16} /> : <TrendingUp aria-hidden="true" size={16} />}
-          {stateLabel}
-        </p>
+        {showState ? (
+          <p className={`flex shrink-0 items-center gap-1 text-sm font-medium ${STATE_TEXT_CLASS[progress.state]}`}>
+            {progress.state === "completed" ? <Target aria-hidden="true" size={16} /> : <TrendingUp aria-hidden="true" size={16} />}
+            {stateLabel}
+          </p>
+        ) : null}
       </div>
 
       <div>

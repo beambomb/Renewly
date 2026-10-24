@@ -182,19 +182,54 @@ describe("upcoming in 30 days", () => {
   });
 });
 
-describe("monthly cost and categories", () => {
-  it("totals active subscriptions per currency, ignoring filters", () => {
-    const items = [
-      sub("A", "2026-11-05", { priceMinor: 1000 }),
-      sub("B", "2026-11-05", { priceMinor: 12000, billingCycle: "yearly" }),
-      sub("C", "2026-11-05", { priceMinor: 500, currency: "EUR" }),
-      sub("Paused", "2026-11-05", { priceMinor: 9999, status: "paused" }),
-    ];
+describe("section monthly cost and categories", () => {
+  const items = [
+    sub("A", "2026-11-05", { priceMinor: 1000, category: "Cloud" }),
+    sub("B", "2026-11-05", { priceMinor: 12000, billingCycle: "yearly", category: "Cloud" }),
+    sub("C", "2026-11-05", { priceMinor: 500, currency: "EUR", category: "Music" }),
+    sub("Paused", "2026-11-05", { priceMinor: 9999, status: "paused" }),
+  ];
+
+  it("totals the listed active subscriptions per currency", () => {
+    const group = buildDashboard(items, {}, TODAY).groups[0];
+    expect(group?.cost).toEqual({
+      totals: [
+        { currency: "EUR", monthlyMinor: 500 },
+        { currency: "USD", monthlyMinor: 2000 },
+      ],
+      estimated: false,
+    });
+  });
+
+  it("follows the displayed list when filters apply", () => {
+    const cloud = buildDashboard(items, { category: "cloud" }, TODAY).groups[0];
+    expect(cloud?.cost?.totals).toEqual([{ currency: "USD", monthlyMinor: 2000 }]);
+    const music = buildDashboard(items, { category: "music" }, TODAY).groups[0];
+    expect(music?.cost?.totals).toEqual([{ currency: "EUR", monthlyMinor: 500 }]);
+  });
+
+  it("has no groups, and so no figure, when nothing matches", () => {
     const view = buildDashboard(items, { query: "zzz" }, TODAY);
-    expect(view.monthlyTotals).toEqual([
-      { currency: "EUR", monthlyMinor: 500 },
-      { currency: "USD", monthlyMinor: 2000 },
-    ]);
+    expect(view.groups).toEqual([]);
+    expect("monthlyTotals" in view).toBe(false);
+  });
+
+  it("gives reminder, savings and warranty groups no cost and flags recurring as an estimate", () => {
+    const view = buildDashboard(
+      [
+        make({ kind: "reminder", name: "Passport", periodStart: TODAY, dueDate: "2026-12-01", priceMinor: 100, currency: "USD", billingCycle: "monthly" }),
+        goal("Trip", 100, 1000),
+        make({ kind: "warranty", name: "Laptop", periodStart: "2025-01-01", dueDate: "2028-01-01", priceMinor: 100, currency: "USD" }),
+        make({ kind: "recurring", name: "Beans", periodStart: "2026-10-14", dueDate: "2026-10-28", usualPriceMinor: 120000, usualCurrency: "IDR", durationDays: 14 }),
+      ],
+      {},
+      TODAY,
+    );
+    const costOf = (kind: string) => view.groups.find((g) => g.kind === kind)?.cost;
+    expect(costOf("reminder")).toBeNull();
+    expect(costOf("savings")).toBeNull();
+    expect(costOf("warranty")).toBeNull();
+    expect(costOf("recurring")).toEqual({ totals: [{ currency: "IDR", monthlyMinor: 260893 }], estimated: true });
   });
 
   it("lists distinct categories sorted", () => {

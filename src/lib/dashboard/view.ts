@@ -1,6 +1,6 @@
 import type { CalendarDate } from "@/lib/dates/calendar";
 import { ITEM_KINDS, type Item, type ItemKind } from "@/lib/items/types";
-import { monthlyTotals, type CostItem, type CurrencyTotal } from "@/lib/money/money";
+import { sectionMonthlyCost, type SectionCost } from "@/lib/money/section-cost";
 import { computeRing, urgencyRank, type RingViewModel } from "@/lib/rings/ring";
 import { computeSavings, type SavingsProgress } from "@/lib/savings/savings";
 
@@ -17,6 +17,8 @@ export type DashboardEntry =
 export interface SectionGroup {
   kind: ItemKind;
   entries: DashboardEntry[];
+  /** Monthly cost of the entries listed here (after filters); null when the section has none. */
+  cost: SectionCost | null;
 }
 
 export interface UpcomingEntry {
@@ -29,8 +31,6 @@ export interface DashboardView {
   groups: SectionGroup[];
   /** Active items due within the window, soonest first. */
   upcoming: UpcomingEntry[];
-  /** Monthly subscription cost per currency, from all items regardless of filters. */
-  monthlyTotals: CurrencyTotal[];
   /** Distinct categories across all items, sorted. */
   categories: string[];
   total: number;
@@ -121,19 +121,10 @@ export function buildDashboard(
       }
     }
     entries.sort(compareEntries);
-    if (entries.length > 0) groups.push({ kind, entries });
+    if (entries.length > 0) groups.push({ kind, entries, cost: sectionMonthlyCost(kind, entries.map((e) => e.item)) });
   }
 
   upcoming.sort((a, b) => a.daysLeft - b.daysLeft || a.item.name.localeCompare(b.item.name));
-
-  const costItems: CostItem[] = items.map((item) => ({
-    kind: item.kind,
-    status: item.status,
-    priceMinor: item.priceMinor,
-    currency: item.currency,
-    billingCycle: item.billingCycle,
-    cycleDays: item.cycleDays,
-  }));
 
   const categories = [...new Set(items.map((i) => i.category).filter((c): c is string => Boolean(c)))].sort((a, b) =>
     a.localeCompare(b),
@@ -142,7 +133,6 @@ export function buildDashboard(
   return {
     groups,
     upcoming,
-    monthlyTotals: monthlyTotals(costItems),
     categories,
     total: items.length,
     shown: groups.reduce((sum, g) => sum + g.entries.length, 0),
