@@ -36,7 +36,9 @@
 ## Known issues and NOT verified
 - TypeScript is pinned to 6.0.3, not 7.0.2: typescript-eslint (via eslint-config-next) throws on TS 7. Revisit when it supports 7.1+.
 - Vitest 5 / rolldown: npm skipped the Windows native binding. Fixed by listing `@rolldown/binding-win32-x64-msvc@1.2.15` in optionalDependencies (npm installs it only on Windows x64). Not yet checked with a clean `npm ci`.
-- NOT verified: migrations and tests against a real hosted Supabase project (no project or credentials yet). The local run uses stubs for auth, storage and roles (`supabase/tests/support/local-stubs.sql`), so platform differences (required columns on auth.users, storage triggers) could still show up on the first `npx supabase db push` and `npm run test:rls`.
+- VERIFIED 2026-10-24 on the real Supabase project: migrations 0001-0004 applied (`npm run db:migrate`, recorded in `supabase_migrations.schema_migrations`) and `npm run test:rls` passes 100 assertions (RLS isolation, storage policies, constraints, seed). One platform difference found and handled: Supabase blocks direct DELETEs on storage tables, so the test sets `storage.allow_delete_query`.
+- Shell gotcha (my mistake, fixed): placeholder `NEXT_PUBLIC_*` env vars I set for a probe dev server stayed in my terminal and silently overrode `.env.local` in checks. `check-env.mjs` and the test runner now read the file directly and warn about terminal overrides. Run `npm run dev` from your own terminal.
+- Session-pooler logins can fail transiently with 28P01 (seen once after earlier real wrong-password attempts); retry before assuming a wrong password.
 - An expired warranty is shown in the overdue state; its wording ("Expired N days ago") is handled in task 4.3.
 - npm warns EBADENGINE: some dev dependency wants Node ^24.15 or ^22.22.2, this machine has 24.7.0. Tests and build work; upgrading Node removes the warning.
 - CSP uses `'unsafe-inline'` for scripts and styles (static pages, no nonce yet). A nonce-based CSP via middleware is a possible hardening step.

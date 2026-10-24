@@ -6,7 +6,8 @@
 //                                            migrations are already applied).
 //
 // Every test file runs inside a transaction that is always rolled back.
-import { readdirSync, readFileSync } from "node:fs";
+import { existsSync, readdirSync, readFileSync } from "node:fs";
+import { parseEnv } from "node:util";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -35,14 +36,31 @@ async function connect() {
       close: () => db.close(),
     };
   }
-  const url = process.env.SUPABASE_DB_URL;
+  // Prefer the value in .env.local (read directly, never printed), else the terminal's.
+  const envFile = join(root, ".env.local");
+  const fromFile = existsSync(envFile) ? parseEnv(readFileSync(envFile, "utf8")).SUPABASE_DB_URL : undefined;
+  const url = fromFile || process.env.SUPABASE_DB_URL;
   if (!url) {
     console.error("SUPABASE_DB_URL is not set. Use --local, or export it in your shell (see README).");
     process.exit(2);
   }
   const { default: pg } = await import("pg");
   const client = new pg.Client({ connectionString: url, ssl: { rejectUnauthorized: false } });
-  await client.connect();
+  try {
+    await client.connect();
+  } catch (error) {
+    // Short, safe message: no stack trace and never the connection string.
+    const hints = {
+      "28P01": "Wrong database password. Reset it in Supabase: Project Settings > Database > Reset database password, then copy a fresh connection string (Connect > Direct).",
+      "28000": "The database rejected the user name. For the pooler the user must look like postgres.<project-ref>.",
+      ENOTFOUND: "Host not found. Check the host in the connection string; the direct host is IPv6-only on the free plan, so try the Session pooler.",
+      ETIMEDOUT: "Connection timed out. Try the Session pooler connection string.",
+      ECONNREFUSED: "Connection refused. Check host and port (use 5432).",
+    };
+    console.error(`Could not connect to the database (${error.code ?? error.name}).`);
+    console.error(hints[error.code] ?? String(error.message ?? "").split("\n")[0]);
+    process.exit(1);
+  }
   return {
     run: async (sql) => asResultList(await client.query(sql)),
     close: () => client.end(),

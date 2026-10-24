@@ -134,6 +134,9 @@ select rls_test.affected('A cannot overwrite B file',
 select rls_test.fails('A cannot move own file into B folder',
   $q$ update storage.objects set name = '00000000-0000-4000-8000-0000000000b2/stolen.webp'
       where name = '00000000-0000-4000-8000-0000000000a1/new.webp' $q$, '42501');
+-- Supabase blocks direct DELETEs on storage tables with a trigger (the Storage API
+-- sets this flag itself). Enable it for this transaction so the RLS policy is what is tested.
+select set_config('storage.allow_delete_query', 'true', true);
 select rls_test.affected('A cannot delete B file',
   $q$ delete from storage.objects where name like '%b2/%' $q$, 0);
 select rls_test.affected('A can delete own file',
