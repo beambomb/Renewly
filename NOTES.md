@@ -2,8 +2,9 @@
 
 ## Status
 - Done: git repo initialised; design reference cloned (git-ignored); design system generated and written; token contrast script passes; steering and spec files written.
-- Tasks 1.1, 2.1, 2.2 complete (committed locally). lint, 5 unit tests, `next build` pass; response headers (CSP, nosniff, HSTS, frame deny) checked against `next start`.
-- Next: 3.1 core schema migration.
+- Tasks 1.1, 2.1, 2.2, 3.1-3.5 complete (committed locally). lint, 5 unit tests, `next build` pass; response headers (CSP, nosniff, HSTS, frame deny) checked against `next start`.
+- Schema, RLS, storage policies and seed: 100 SQL assertions pass on embedded Postgres (PGlite) via `npm run test:rls:local`. A deliberately broken policy is caught by the tests.
+- Next: 4.1 calendar-date utilities (pure logic with Vitest).
 
 ## Decisions
 - 2026-10-23: Style = Minimalism & Swiss, IBM Plex Sans, navy/gold palette. Reason: second generator query (narrower) fit dashboards and has low a11y risk; the first query returned Glassmorphism with a landing-page pattern. Rejected: Glassmorphism/Fira (blur hurts contrast, not a fit for dense ring grid).
@@ -13,6 +14,9 @@
 - 2026-10-23: reminder_log and notifications are written only by the service role. Reason: clients must not forge or erase the idempotency log.
 - 2026-10-23: Email via Resend; without a verified domain it only delivers to the account owner's address.
 - 2026-10-23: Hosted Supabase dev project for SQL/RLS tests (no Docker); local Supabase documented as alternative.
+- 2026-10-24: SQL tests also run locally on PGlite (real Postgres in WASM) with small Supabase stubs, so RLS is verifiable with no account or Docker. Rejected: Docker-only `supabase start`.
+- 2026-10-24: purchase_history and reminder_log use a composite FK (item_id, user_id) to items(id, user_id), so a child row can never point at another user's item.
+- 2026-10-24: Migrations use numeric prefixes (0001_...) instead of timestamps.
 - 2026-10-23: Scheduler = Supabase pg_cron + Edge Function (tentative). Limits to be verified in task 11.1.
 
 ## Assumptions and open questions
@@ -22,7 +26,9 @@
 
 ## Known issues and NOT verified
 - TypeScript is pinned to 6.0.3, not 7.0.2: typescript-eslint (via eslint-config-next) throws on TS 7. Revisit when it supports 7.1+.
-- Vitest 5 / rolldown: npm skipped the Windows optional binding on first install. Fix used: `npm install --no-save @rolldown/binding-win32-x64-msvc@1.2.15`. If `npm test` fails with "Cannot find module @rolldown/binding-wasm32-wasi", run that. Check on a clean `npm ci` before relying on it (Vercel runs Linux, unaffected).
+- Vitest 5 / rolldown: npm skipped the Windows native binding. Fixed by listing `@rolldown/binding-win32-x64-msvc@1.2.15` in optionalDependencies (npm installs it only on Windows x64). Not yet checked with a clean `npm ci`.
+- NOT verified: migrations and tests against a real hosted Supabase project (no project or credentials yet). The local run uses stubs for auth, storage and roles (`supabase/tests/support/local-stubs.sql`), so platform differences (required columns on auth.users, storage triggers) could still show up on the first `npx supabase db push` and `npm run test:rls`.
+- An expired warranty is shown in the overdue state; its wording ("Expired N days ago") is handled in task 4.3.
 - npm warns EBADENGINE: some dev dependency wants Node ^24.15 or ^22.22.2, this machine has 24.7.0. Tests and build work; upgrading Node removes the warning.
 - CSP uses `'unsafe-inline'` for scripts and styles (static pages, no nonce yet). A nonce-based CSP via middleware is a possible hardening step.
 - `.kiro/settings/` (local permissions) is git-ignored.

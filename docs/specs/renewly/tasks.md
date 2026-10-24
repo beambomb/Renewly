@@ -20,15 +20,15 @@ Work strictly in order. Each task: objective, files, tests, manual check. Tick t
 
 ## Phase 2: Database
 
-- [ ] **3.1 Core schema migration** (profiles, items, purchase_history, indexes, constraints, triggers)
+- [x] **3.1 Core schema migration** (profiles, items, purchase_history, indexes, constraints, triggers)
   - Files: `supabase/migrations/0001_core.sql`. Tests: constraint checks in `supabase/tests/schema.sql`. Manual: apply to dev project, inspect tables.
-- [ ] **3.2 Notifications, reminder_log, push_subscriptions migration**
+- [x] **3.2 Notifications, reminder_log, push_subscriptions migration**
   - Files: `supabase/migrations/0002_reminders.sql`. Tests: unique-key conflict test.
-- [ ] **3.3 RLS policies for all tables**
+- [x] **3.3 RLS policies for all tables**
   - Files: `supabase/migrations/0003_rls.sql`. Tests: `supabase/tests/rls.sql` two-user isolation per table.
-- [ ] **3.4 Storage buckets and policies** (`logos`, `receipts`, size and MIME limits)
+- [x] **3.4 Storage buckets and policies** (`logos`, `receipts`, size and MIME limits)
   - Files: `supabase/migrations/0004_storage.sql`. Tests: cross-user object access in `rls.sql`.
-- [ ] **3.5 Test runner and seed**
+- [x] **3.5 Test runner and seed**
   - Files: `scripts/run-sql-tests.mjs`, `supabase/seed.sql`, `package.json` script `test:rls`. Manual: run against a throwaway dev project.
 
 ## Phase 3: Pure logic (Vitest)
