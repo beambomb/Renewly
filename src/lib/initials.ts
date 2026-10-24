@@ -10,5 +10,5 @@ export function initialsOf(name: string): string {
   const first = words[0] as string;
   if (words.length === 1) return Array.from(first).slice(0, 2).join("").toUpperCase();
   const second = words[1] as string;
-  return (Array.from(first)[0] + Array.from(second)[0]).toUpperCase();
+  return (Array.from(first).slice(0, 1).join("") + Array.from(second).slice(0, 1).join("")).toUpperCase();
 }

@@ -56,6 +56,8 @@
   --icon-md: 20px;
   --icon-lg: 24px;
   --nav-height: 64px;
+  /* Keeps scrolled content clear of the fixed bottom nav and the home indicator. */
+  --content-bottom-pad: calc(var(--nav-height) + env(safe-area-inset-bottom) + 1.5rem);
   color-scheme: light;
 }
 

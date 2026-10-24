@@ -23,6 +23,21 @@ export const strings = {
   a11y: {
     skipToContent: "Skip to content",
   },
+  dev: {
+    ringsTitle: "Ring gallery",
+    ringsLead: "Development only. Every ring state, kind and logo variant on a fixed date (24 Oct 2026).",
+    sizes: "Sizes",
+    detail: "Detail size",
+    card: "Card size",
+  },
+  pages: {
+    addTitle: "Add an item",
+    addLead: "Choose what you want to keep track of.",
+    alertsTitle: "Alerts",
+    alertsEmpty: "No alerts yet. Reminders will show up here before something is due.",
+    settingsTitle: "Settings",
+    settingsLead: "Time zone, currency and reminder defaults.",
+  },
   ring: {
     daysLeft: (n: number) => `${n} days left`,
     oneDayLeft: "1 day left",
