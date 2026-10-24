@@ -85,3 +85,28 @@ As a user I see everything that needs attention first.
 - WHEN I open the site on a phone THE SYSTEM SHALL be installable (manifest, icons, service worker).
 - THE SYSTEM SHALL meet WCAG AA contrast, show visible focus, never convey status by colour alone, and support reduced motion and keyboard use.
 - THE SYSTEM SHALL keep all UI strings in `src/lib/strings.ts`.
+
+## R12 Sections (added 2026-10-24)
+As a user I organise what I track into a fixed set of sections, each with its own form and look.
+- THE SYSTEM SHALL offer these sections: Subscriptions, Reminders, Savings (tabungan), Recurring purchases and Warranties. The list is fixed for now (not user-defined).
+- WHEN I tap Add THE SYSTEM SHALL show the sections as large (44px or more) options and open the form for the one I pick.
+- WHEN I open the dashboard THE SYSTEM SHALL group items by section, let me filter to one section, and render each section in its own style: rings for time-based items, progress cards for savings, compact rows for reminders.
+- THE SYSTEM SHALL keep section-specific fields validated by one shared zod schema per section.
+
+## R13 Savings goals (tabungan)
+As a user I set a savings goal and record how much I have saved so far.
+- WHEN I create a goal THE SYSTEM SHALL require a name, a target amount above 0 and a currency, and accept a starting amount (default 0), an optional target date, an emoji and notes.
+- WHEN I add a deposit THE SYSTEM SHALL increase the saved total, record the entry (date, amount, note) and update the progress immediately.
+- WHEN I withdraw THE SYSTEM SHALL decrease the total, but SHALL NOT allow it to go below 0.
+- WHEN I correct the total THE SYSTEM SHALL record the difference as an adjustment entry so history stays consistent.
+- THE SYSTEM SHALL show progress as saved, target, percent (not colour alone), the amount still needed and, with a target date, the amount needed per month.
+- WHEN the saved total reaches the target THE SYSTEM SHALL show a completed state with text, and send no further reminders for the goal.
+- WHEN a goal has a target date THE SYSTEM SHALL remind me before it using the usual offsets.
+- THE SYSTEM SHALL store amounts in the currency's minor units as 64-bit integers (large amounts such as tens of millions of rupiah fit) and show Indonesian rupiah without decimals.
+
+## R14 Reminders (general)
+As a user I keep simple dated reminders that are not tied to a purchase.
+- WHEN I create a reminder THE SYSTEM SHALL require a title and a date, and accept notes and an optional repeat (weekly, monthly, yearly or every N days).
+- WHEN a reminder is repeating and I mark it done THE SYSTEM SHALL move it to the next occurrence (month-end and leap-day rules as for billing).
+- WHEN a one-off reminder is marked done THE SYSTEM SHALL mark it done, show it as completed and send no further reminders.
+- WHEN a reminder is overdue THE SYSTEM SHALL show it as overdue with text until I mark it done or change its date.

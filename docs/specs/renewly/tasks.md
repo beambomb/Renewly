@@ -52,19 +52,32 @@ Work strictly in order. Each task: objective, files, tests, manual check. Tick t
 - [x] **6.2 Sign-in page and callback** (magic link, inline errors) - tests: email schema.
 - [x] **6.3 Profile bootstrap and settings** (timezone, currency, default offsets) - tests: settings schema.
 
-## Phase 6: Items
+## Phase 6: Sections and items (revised 2026-10-24: five fixed sections, see requirements R12-R14)
 
-- [ ] **7.1 Item zod schemas and DB mapping** (shared client/server) - tests: each kind, invalid cases, https cancel link.
-- [ ] **7.2 Server actions** create/update/delete with derived `period_start`/`due_date` - tests: derivation.
-- [ ] **7.3 Quick-add sheet and subscription form**
-- [ ] **7.4 Recurring purchase form**
-- [ ] **7.5 Warranty form** (expiry computed from length)
-- [ ] **7.6 Detail page** (ring, fields, edit, pause/resume/cancel, delete confirm)
+Sections (fixed list for now): subscription, reminder, savings (tabungan), recurring purchase, warranty. Each has its own form and its own look.
+
+- [ ] **6.4 Migration 0005 for the new sections**
+  - Objective: allow kinds `reminder` and `savings`; money columns to bigint with higher caps (IDR amounts); savings fields (`target_minor`, `saved_minor`); nullable `period_start`/`due_date` for savings without a deadline; status `done` for one-off reminders; `savings_entries` table (deposits, withdrawals, adjustments) with a trigger that keeps `saved_minor` in sync; owner-only RLS.
+  - Files: `supabase/migrations/0005_sections.sql`, `supabase/tests/04_sections.sql`; adjust earlier SQL tests if constraints changed.
+  - Tests: constraints per new kind, trigger arithmetic, never below zero, cross-user isolation on `savings_entries`.
+  - Manual: `npm run test:rls:local`.
+
+- [ ] **7.1 Item zod schemas and DB mapping for all five kinds** (shared client/server) - tests: each kind, invalid cases, https cancel link, IDR amounts.
+- [ ] **7.2 Date derivation and server actions** create/update/delete with derived `period_start`/`due_date` - tests: derivation per kind.
+- [ ] **7.3 Add flow: section picker sheet** (five large options, one-thumb)
+- [ ] **7.4 Subscription form**
+- [ ] **7.5 Recurring purchase form**
+- [ ] **7.6 Warranty form** (expiry computed from length)
+- [ ] **7.7 Reminder form** (one-off or repeating, "mark done")
+- [ ] **7.8 Savings goal form** (name, target, starting amount, optional deadline)
+- [ ] **7.9 Detail pages per section** (time ring for subscription, recurring, warranty, reminder; savings progress card with entry history; edit, pause/resume/cancel, delete confirm)
+- [ ] **7.10 Savings entries**: deposit, withdraw, correct the total - tests: arithmetic, never below zero, goal reached state.
+- [ ] **7.11 Savings maths** (pure, `src/lib/savings`) - tests: percent, remaining, monthly need, completed, overdue.
 
 ## Phase 7: Dashboard
 
 - [ ] **8.1 Query + sort/filter/search logic** (pure) - tests: ordering, filters, search.
-- [ ] **8.2 Dashboard grid, filters in URL, empty state**
+- [ ] **8.2 Dashboard by section** (section tabs/chips, each section with its own layout: rings for time-based, progress cards for savings, compact rows for reminders), filters in URL, empty states
 - [ ] **8.3 Upcoming in 30 days + monthly cost summary**
 - [ ] **8.4 Performance check with 200 seeded items** (note measurements in NOTES.md)
 

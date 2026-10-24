@@ -84,3 +84,27 @@ Monthly on 29/30/31, yearly Feb 29 (leap and non-leap, multi-year), DST transiti
 ## Security headers and CSP
 
 Set in `next.config`: CSP (default-src 'self'; img-src 'self' data: blob: <supabase host>; connect-src 'self' <supabase host>; style-src 'self' 'unsafe-inline' only if required by Next; frame-ancestors 'none'), X-Content-Type-Options nosniff, Referrer-Policy strict-origin-when-cross-origin, Permissions-Policy, HSTS in production.
+
+## Sections (added 2026-10-24)
+
+`items.kind` becomes one of `subscription | reminder | savings | recurring | warranty` (migration 0005). Section registry in code (`src/lib/items/sections.ts`) maps each kind to its label, icon, form fields, dashboard layout and which date fields drive its ring.
+
+| Section | Drives | Ring / visual | Notes |
+| --- | --- | --- | --- |
+| Subscription | next billing date | time-left ring + price | monthly cost summary |
+| Recurring purchase | last purchase + duration | time-left ring | "I bought it again" |
+| Warranty | expiry date | time-left ring | receipt upload |
+| Reminder | date, optional repeat | compact row with small ring and a "done" action | reuses billing cycle maths for repeats; status `done` for one-offs |
+| Savings (tabungan) | saved / target | wallet-style progress card: amount, bar, percent text, remaining, monthly need | deadline optional; reminders only with a deadline |
+
+### Data changes (0005)
+- `status` gains `done` (one-off reminders). `kind` check gains `reminder`, `savings`.
+- Money columns that hold minor units move to `bigint` with higher caps so IDR amounts fit (50 juta = 5,000,000,000 minor units at 2 digits exceeds int32). The app treats IDR as 0-decimal (override in `minorUnitDigits`), so minor units equal rupiah.
+- Savings columns on `items`: `target_minor bigint`, `saved_minor bigint default 0`, `currency` reused. `period_start`/`due_date` become nullable only for savings without a deadline (check: other kinds still require both).
+- `savings_entries (id, user_id, item_id, amount_minor bigint, kind deposit|withdrawal|adjustment, occurred_on date, note, created_at)` with composite FK `(item_id, user_id)` like the other child tables. A trigger keeps `items.saved_minor = sum(entries)`; a check keeps the sum at 0 or more. Owner-only RLS (select/insert/delete; no update, entries are immutable, corrections are new entries).
+- Reminders reuse `billing_cycle`, `cycle_days`, `billing_anchor_day` for repeats; `billing_cycle` is null for a one-off. A reminder has no price.
+
+### Savings maths (pure, `src/lib/savings`)
+- fraction = clamp(saved / target, 0, 1); percent = floor for display so 99.9% never reads as 100%.
+- remaining = max(target - saved, 0). With a deadline: months left = max(1, ceil(days / 30.4375)); needed per month = ceil(remaining / months left). Completed when saved >= target. Overdue when a deadline passed and not completed.
+- Withdrawals are rejected if they would make the total negative.

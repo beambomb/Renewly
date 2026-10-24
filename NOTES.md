@@ -10,6 +10,8 @@
 - Next: 7.1 item zod schemas and DB mapping.
 
 ## Decisions
+- 2026-10-24: SCOPE CHANGE from the user: the app is not only subscriptions. Fixed sections for now: Subscriptions, Reminders, Savings (tabungan: goal with target, user records how much saved) and, kept from the original brief, Recurring purchases and Warranties. Each section has its own form and visual style (rings for time-based items, wallet-style progress card for savings, compact rows for reminders). Assumption: recurring purchases and warranties STAY; ask the user if they want them removed. Specs updated (R12-R14, design.md "Sections", tasks 6.4 and 7.x). Reason: the data model differs per section. Rejected: one generic ring for everything.
+- 2026-10-24: Amounts use bigint minor units, IDR treated as 0-decimal. Reason: 50 juta at 2 decimals overflows int32.
 - 2026-10-23: Style = Minimalism & Swiss, IBM Plex Sans, navy/gold palette. Reason: second generator query (narrower) fit dashboards and has low a11y risk; the first query returned Glassmorphism with a landing-page pattern. Rejected: Glassmorphism/Fira (blur hurts contrast, not a fit for dense ring grid).
 - 2026-10-23: shadcn/ui not used. Reason: generator did not recommend it for this product. Plain Tailwind + tokens.
 - 2026-10-23: Ran the generator Python scripts directly, not the `npx ui-ux-pro-max-cli`. Reason: stdlib-only, skimmed, no network; no need to install a skill.
