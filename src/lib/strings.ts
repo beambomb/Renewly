@@ -23,6 +23,21 @@ export const strings = {
   a11y: {
     skipToContent: "Skip to content",
   },
+  auth: {
+    signInTitle: "Sign in",
+    signInLead: "Enter your email and we will send you a sign-in link. No password needed.",
+    emailLabel: "Email address",
+    emailHint: "We only use it to sign you in and to send reminders.",
+    submit: "Send sign-in link",
+    submitting: "Sending...",
+    invalidEmail: "Enter a valid email address, like name@example.com.",
+    sendFailed: "We could not send the link. Wait a minute and try again.",
+    linkFailed: "That sign-in link is invalid or has expired. Request a new one.",
+    sentTitle: "Check your inbox",
+    sentBody: (email: string) => `We sent a sign-in link to ${email}. Open it on this device to finish signing in.`,
+    useDifferentEmail: "Use a different email",
+    signOut: "Sign out",
+  },
   dev: {
     ringsTitle: "Ring gallery",
     ringsLead: "Development only. Every ring state, kind and logo variant on a fixed date (24 Oct 2026).",
