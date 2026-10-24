@@ -56,7 +56,7 @@ Work strictly in order. Each task: objective, files, tests, manual check. Tick t
 
 Sections (fixed list for now): subscription, reminder, savings (tabungan), recurring purchase, warranty. Each has its own form and its own look.
 
-- [ ] **6.4 Migration 0005 for the new sections**
+- [x] **6.4 Migration 0005 for the new sections**
   - Objective: allow kinds `reminder` and `savings`; money columns to bigint with higher caps (IDR amounts); savings fields (`target_minor`, `saved_minor`); nullable `period_start`/`due_date` for savings without a deadline; status `done` for one-off reminders; `savings_entries` table (deposits, withdrawals, adjustments) with a trigger that keeps `saved_minor` in sync; owner-only RLS.
   - Files: `supabase/migrations/0005_sections.sql`, `supabase/tests/04_sections.sql`; adjust earlier SQL tests if constraints changed.
   - Tests: constraints per new kind, trigger arithmetic, never below zero, cross-user isolation on `savings_entries`.
