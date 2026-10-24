@@ -42,9 +42,9 @@ Work strictly in order. Each task: objective, files, tests, manual check. Tick t
 
 ## Phase 4: UI shell and ring
 
-- [ ] **5.1 Ring component** (SVG, states, aria-label, reduced motion, logo/emoji/initials) - tests: four states + inactive, aria text.
-- [ ] **5.2 App shell** (header, bottom nav 4 items, safe areas, theme) - manual at 375px.
-- [ ] **5.3 Gallery page** `/dev/rings` (dev only) for visual review.
+- [x] **5.1 Ring component** (SVG, states, aria-label, reduced motion, logo/emoji/initials) - tests: four states + inactive, aria text.
+- [x] **5.2 App shell** (header, bottom nav 4 items, safe areas, theme) - manual at 375px.
+- [x] **5.3 Gallery page** `/dev/rings` (dev only) for visual review.
 
 ## Phase 5: Auth
 
