@@ -124,6 +124,23 @@ describe("weekly and custom N-day cycles", () => {
   });
 });
 
+describe("explicit anchor day (rebuilding a schedule from a stored due date)", () => {
+  it("restores the 31st after a clamped February date", () => {
+    // Stored: due 2026-02-28, anchor day 31.
+    const s: BillingSchedule = { cycle: "monthly", anchor: "2026-02-28", anchorDay: 31 };
+    expect(billingDateAt(s, 1)).toBe("2026-03-31");
+    expect(billingDateAt(s, 2)).toBe("2026-04-30");
+    expect(billingDateAt(s, -1)).toBe("2026-01-31");
+    expect(nextBillingOnOrAfter(s, "2026-03-01")).toBe("2026-03-31");
+  });
+
+  it("restores 29 Feb for a yearly leap-day schedule", () => {
+    const s: BillingSchedule = { cycle: "yearly", anchor: "2029-02-28", anchorDay: 29 };
+    expect(billingDateAt(s, 1)).toBe("2030-02-28");
+    expect(billingDateAt(s, 3)).toBe("2032-02-29");
+  });
+});
+
 describe("billingWindow", () => {
   it("returns the surrounding period", () => {
     expect(billingWindow(monthly("2026-11-15"), "2026-10-24")).toEqual({

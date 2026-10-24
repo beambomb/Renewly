@@ -20,6 +20,12 @@ export interface BillingSchedule {
   /** Required when cycle is "custom": bill every N days. */
   cycleDays?: number | null | undefined;
   anchor: CalendarDate;
+  /**
+   * The intended day of month for monthly and yearly cycles. Needed when the
+   * anchor was clamped (for example the 31st stored as 28 Feb); defaults to
+   * the anchor's own day.
+   */
+  anchorDay?: number | null | undefined;
 }
 
 export function stepDays(schedule: BillingSchedule): number | null {
@@ -38,7 +44,7 @@ export function stepDays(schedule: BillingSchedule): number | null {
 export function billingDateAt(schedule: BillingSchedule, n: number): CalendarDate {
   const step = stepDays(schedule);
   if (step !== null) return addDays(schedule.anchor, step * n);
-  const anchorDay = parseDate(schedule.anchor).day;
+  const anchorDay = schedule.anchorDay ?? parseDate(schedule.anchor).day;
   if (schedule.cycle === "monthly") return addMonths(schedule.anchor, n, anchorDay);
   return addYears(schedule.anchor, n, anchorDay);
 }
