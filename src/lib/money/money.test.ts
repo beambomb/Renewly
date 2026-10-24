@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   formatMoney,
   majorToMinor,
+  minorToMajor,
   minorUnitDigits,
   monthlyMinor,
   monthlyTotals,
@@ -99,6 +100,17 @@ describe("minor units and formatting", () => {
     expect(majorToMinor(0.29, "USD")).toBe(29); // guards against 28.999999
     expect(majorToMinor(1200, "JPY")).toBe(1200);
     expect(majorToMinor(1.5, "KWD")).toBe(1500);
+  });
+
+  it("treats rupiah as whole units, so large amounts stay small integers", () => {
+    expect(minorUnitDigits("IDR")).toBe(0);
+    expect(majorToMinor(50_000_000, "IDR")).toBe(50_000_000);
+    expect(minorToMajor(12_500_000, "IDR")).toBe(12_500_000);
+  });
+
+  it("formats rupiah the Indonesian way with no decimals", () => {
+    expect(formatMoney(12_500_000, "IDR").replace(/\s/g, " ")).toBe("Rp 12.500.000");
+    expect(formatMoney(50_000_000, "IDR").replace(/\s/g, " ")).toBe("Rp 50.000.000");
   });
 
   it("formats amounts", () => {

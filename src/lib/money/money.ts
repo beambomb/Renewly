@@ -56,10 +56,23 @@ export function monthlyTotals(items: readonly CostItem[]): CurrencyTotal[] {
     .sort((a, b) => a.currency.localeCompare(b.currency));
 }
 
-/** Number of minor-unit digits for a currency (2 for USD, 0 for JPY, 3 for KWD). */
+/**
+ * Currencies treated as whole units even though ICU lists decimals. Indonesian
+ * rupiah is quoted and paid in whole rupiah, so 1 minor unit = Rp 1.
+ */
+const WHOLE_UNIT_OVERRIDES: Readonly<Record<string, number>> = { IDR: 0 };
+
+/** Number of minor-unit digits for a currency (2 for USD, 0 for JPY and IDR, 3 for KWD). */
 export function minorUnitDigits(currency: string): number {
+  const override = WHOLE_UNIT_OVERRIDES[currency];
+  if (override !== undefined) return override;
   return new Intl.NumberFormat("en", { style: "currency", currency }).resolvedOptions()
     .maximumFractionDigits ?? 2;
+}
+
+/** Number formatting follows the currency's home locale where it matters (Rp 12.500.000). */
+export function defaultLocaleFor(currency: string): string {
+  return currency === "IDR" ? "id-ID" : "en-US";
 }
 
 export function minorToMajor(minor: number, currency: string): number {
@@ -70,8 +83,12 @@ export function majorToMinor(major: number, currency: string): number {
   return Math.round(major * 10 ** minorUnitDigits(currency));
 }
 
-export function formatMoney(minor: number, currency: string, locale = "en-US"): string {
-  return new Intl.NumberFormat(locale, { style: "currency", currency }).format(
-    minorToMajor(minor, currency),
-  );
+export function formatMoney(minor: number, currency: string, locale = defaultLocaleFor(currency)): string {
+  const digits = minorUnitDigits(currency);
+  return new Intl.NumberFormat(locale, {
+    style: "currency",
+    currency,
+    minimumFractionDigits: digits,
+    maximumFractionDigits: digits,
+  }).format(minorToMajor(minor, currency));
 }
