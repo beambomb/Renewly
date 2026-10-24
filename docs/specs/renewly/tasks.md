@@ -62,7 +62,7 @@ Sections (fixed list for now): subscription, reminder, savings (tabungan), recur
   - Tests: constraints per new kind, trigger arithmetic, never below zero, cross-user isolation on `savings_entries`.
   - Manual: `npm run test:rls:local`.
 
-- [ ] **7.1 Item zod schemas and DB mapping for all five kinds** (shared client/server) - tests: each kind, invalid cases, https cancel link, IDR amounts.
+- [x] **7.1 Item zod schemas and DB mapping for all five kinds** (shared client/server) - tests: each kind, invalid cases, https cancel link, IDR amounts.
 - [ ] **7.2 Date derivation and server actions** create/update/delete with derived `period_start`/`due_date` - tests: derivation per kind.
 - [ ] **7.3 Add flow: section picker sheet** (five large options, one-thumb)
 - [ ] **7.4 Subscription form**
