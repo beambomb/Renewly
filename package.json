@@ -14,7 +14,8 @@
     "test": "vitest --run",
     "check:tokens": "node scripts/check-design-tokens.mjs",
     "test:rls": "node scripts/run-sql-tests.mjs",
-    "test:rls:local": "node scripts/run-sql-tests.mjs --local"
+    "test:rls:local": "node scripts/run-sql-tests.mjs --local",
+    "check:env": "node scripts/check-env.mjs"
   },
   "dependencies": {
     "@supabase/ssr": "0.12.7",
