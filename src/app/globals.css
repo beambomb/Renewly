@@ -144,7 +144,22 @@ button:disabled,
   cursor: not-allowed;
 }
 
+/* Ring fill: animates stroke-dashoffset once; the final state is the SVG attribute. */
+@keyframes ring-fill {
+  from {
+    stroke-dashoffset: var(--ring-circumference);
+  }
+}
+
+.ring-progress {
+  animation: ring-fill var(--duration-ring) var(--ease-standard) both;
+}
+
 @media (prefers-reduced-motion: reduce) {
+  .ring-progress {
+    animation: none;
+  }
+
   *,
   *::before,
   *::after {
