@@ -72,7 +72,7 @@ Sections (fixed list for now): subscription, reminder, savings (tabungan), recur
 - [ ] **7.8 Savings goal form** (name, target, starting amount, optional deadline)
 - [ ] **7.9 Detail pages per section** (time ring for subscription, recurring, warranty, reminder; savings progress card with entry history; edit, pause/resume/cancel, delete confirm)
 - [ ] **7.10 Savings entries**: deposit, withdraw, correct the total - tests: arithmetic, never below zero, goal reached state.
-- [ ] **7.11 Savings maths** (pure, `src/lib/savings`) - tests: percent, remaining, monthly need, completed, overdue.
+- [x] **7.11 Savings maths** (pure, `src/lib/savings`) - tests: percent, remaining, monthly need, completed, overdue.
 
 ## Phase 7: Dashboard
 
