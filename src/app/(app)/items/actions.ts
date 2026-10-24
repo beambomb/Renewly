@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
+import { safeRedirectPath } from "@/lib/auth/redirect";
 import { getUserContext } from "@/lib/data/context";
 import { getItem, isValidItemId } from "@/lib/data/items";
 import { advanceReminder } from "@/lib/items/advance";
@@ -127,7 +128,7 @@ export async function setItemStatus(id: string, status: string): Promise<void> {
 }
 
 /** Done for a one-off reminder; the next occurrence for a repeating one. */
-export async function markReminderDone(id: string): Promise<void> {
+export async function markReminderDone(id: string, returnTo?: string): Promise<void> {
   if (!isValidItemId(id)) redirect("/");
   const context = await getUserContext();
   if (!context) redirect("/sign-in");
@@ -155,7 +156,8 @@ export async function markReminderDone(id: string): Promise<void> {
   }
   revalidatePath("/");
   revalidatePath(`/items/${id}`);
-  redirect(`/items/${id}`);
+  // From the list we stay on the list; from the detail page we stay on the detail page.
+  redirect(returnTo ? safeRedirectPath(returnTo, `/items/${id}`) : `/items/${id}`);
 }
 
 /** Puts a finished one-off reminder back on the list. */
