@@ -1,16 +1,13 @@
 import type { ReactNode } from "react";
 
 const CONTROL =
-  "min-h-11 w-full rounded-md border border-muted-foreground bg-card px-3 text-card-foreground";
+  "min-h-11 w-full rounded-md border border-muted-foreground bg-card px-3 text-card-foreground placeholder:text-muted-foreground";
 
 interface FieldBase {
   id: string;
   label: string;
   hint?: string | undefined;
   error?: string | undefined;
-  /** Shown as "(optional)" when false. Defaults to required. */
-  required?: boolean | undefined;
-  /** Extra classes for the wrapper, for example a grid column span. */
   className?: string | undefined;
 }
 
@@ -25,7 +22,6 @@ export function Field({
   label,
   hint,
   error,
-  required = true,
   className = "",
   children,
 }: FieldBase & { children: ReactNode }) {
@@ -33,7 +29,6 @@ export function Field({
     <div className={`flex min-w-0 flex-col gap-2 ${className}`}>
       <label htmlFor={id} className="font-medium text-foreground">
         {label}
-        {required ? null : <span className="font-normal text-muted-foreground"> (optional)</span>}
       </label>
       {children}
       {hint ? (
@@ -68,7 +63,6 @@ export function TextField({
   label,
   hint,
   error,
-  required,
   className,
   defaultValue = "",
   type = "text",
@@ -80,7 +74,7 @@ export function TextField({
   readOnly,
 }: TextFieldProps) {
   return (
-    <Field id={id} label={label} hint={hint} error={error} required={required} className={className}>
+    <Field id={id} label={label} hint={hint} error={error} className={className}>
       <input
         id={id}
         name={name}
@@ -106,14 +100,13 @@ export function TextAreaField({
   label,
   hint,
   error,
-  required,
   className,
   defaultValue = "",
   maxLength,
   rows = 3,
 }: FieldBase & { name?: string; defaultValue?: string; maxLength?: number; rows?: number }) {
   return (
-    <Field id={id} label={label} hint={hint} error={error} required={required} className={className}>
+    <Field id={id} label={label} hint={hint} error={error} className={className}>
       <textarea
         id={id}
         name={name}
@@ -139,14 +132,13 @@ export function SelectField({
   label,
   hint,
   error,
-  required,
   className,
   defaultValue = "",
   options,
   disabled,
 }: FieldBase & { name?: string; defaultValue?: string; options: readonly Option[]; disabled?: boolean }) {
   return (
-    <Field id={id} label={label} hint={hint} error={error} required={required} className={className}>
+    <Field id={id} label={label} hint={hint} error={error} className={className}>
       <select
         id={id}
         name={name}
@@ -171,35 +163,21 @@ export function CheckboxField({
   id,
   name = id,
   label,
-  hint,
   defaultChecked = false,
   className = "",
 }: {
   id: string;
   name?: string;
   label: string;
-  hint?: string | undefined;
   defaultChecked?: boolean;
   className?: string;
 }) {
   return (
-    <div className={`flex min-w-0 flex-col gap-1 ${className}`}>
+    <div className={`min-w-0 ${className}`}>
       <label htmlFor={id} className="flex min-h-11 items-center gap-3 font-medium text-foreground">
-        <input
-          id={id}
-          name={name}
-          type="checkbox"
-          defaultChecked={defaultChecked}
-          aria-describedby={hint ? `${id}-hint` : undefined}
-          className="size-5 accent-primary"
-        />
+        <input id={id} name={name} type="checkbox" defaultChecked={defaultChecked} className="size-5 accent-primary" />
         {label}
       </label>
-      {hint ? (
-        <p id={`${id}-hint`} className="text-sm text-muted-foreground">
-          {hint}
-        </p>
-      ) : null}
     </div>
   );
 }

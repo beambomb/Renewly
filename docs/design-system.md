@@ -124,7 +124,7 @@ Text pairs need 4.5:1, non-text (ring strokes, borders used as boundaries, focus
 
 - Touch targets at least 44x44px, at least 8px between adjacent targets, expand hit area for small icons. Bottom navigation has at most 5 items (planned: Home, Add, Alerts, Settings = 4).
 - Primary action in the thumb zone: the quick-add button is a bottom-anchored control above the nav. Respect `env(safe-area-inset-*)` for fixed bars; add bottom padding so scroll content is never hidden.
-- Forms: visible labels (never placeholder-only), helper text, inline error next to the field, multi-error forms focus a linked error summary. Native controls where possible.
+- Forms: visible labels (never placeholder-only), helper text only where it prevents a mistake (examples go in placeholders), optional fields grouped in one "More details" disclosure instead of "(optional)" tags, inline error next to the field, multi-error forms focus a linked error summary. Native controls where possible.
 - Dialogs/sheets: focus trap, Escape closes, focus returns to the trigger, destructive confirmation names the item.
 - Pressed feedback within 80-150ms using colour/opacity, never layout-shifting transforms.
 - Cursor pointer on all clickable elements; visible disabled state with native `disabled`.

@@ -69,8 +69,8 @@ export function SavingsEntryForm({ action, today }: Props) {
       ) : (
         <TextField id="amount" label={t.fields.amount} inputMode="decimal" error={error("amount")} />
       )}
-      <TextField id="occurredOn" label={t.fields.date} type="date" defaultValue={today} error={error("occurredOn")} required={false} />
-      <TextField id="note" label={t.fields.note} hint={t.fields.noteHint} error={error("note")} required={false} maxLength={200} />
+      <TextField id="occurredOn" label={t.fields.date} type="date" defaultValue={today} error={error("occurredOn")} />
+      <TextField id="note" label={t.fields.note} hint={t.fields.noteHint} error={error("note")} maxLength={200} />
 
       <button type="submit" disabled={pending} className={PRIMARY_BUTTON}>
         {pending ? t.submitting : t.submit}

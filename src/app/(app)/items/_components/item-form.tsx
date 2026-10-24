@@ -1,7 +1,8 @@
 "use client";
 
+import { ChevronDown } from "lucide-react";
 import Link from "next/link";
-import { useActionState, useEffect, useMemo, useState, type ReactNode } from "react";
+import { useActionState, useEffect, useMemo, useRef, useState } from "react";
 import { FormErrorSummary } from "@/components/form/form-error-summary";
 import {
   CheckboxField,
@@ -23,6 +24,19 @@ const INITIAL: ItemFormState = { status: "idle" };
 // Container-query variants (@xl) follow the form's own width, not the viewport,
 // because the sidebar takes 256px from 768px and would leave two cramped columns.
 const SPAN = "@xl:col-span-2";
+const GRID = "grid gap-4 @xl:grid-cols-2 @xl:gap-x-6";
+
+/** Text fields inside "More details" per kind, besides the ones every kind has. */
+const KIND_EXTRAS: Record<ItemKind, string[]> = {
+  subscription: ["paymentMethod", "cancelUrl"],
+  recurring: ["usualPrice", "usualStore", "usualQuantity"],
+  warranty: ["serialNumber"],
+  reminder: [],
+  savings: ["startingAmount", "deadline"],
+};
+const COMMON_EXTRAS = ["emoji", "category", "notes"];
+// Selects and the reminder days always hold a value, so they only matter for errors.
+const ERROR_ONLY_EXTRAS = ["usualCurrency", "offsets"];
 
 interface Props {
   kind: ItemKind;
@@ -33,23 +47,13 @@ interface Props {
   cancelHref: string;
 }
 
-/** A titled group of fields: one column when the form is narrow, two from 36rem of form width. */
-function FormSection({ id, title, children }: { id: string; title: string; children: ReactNode }) {
-  return (
-    <section aria-labelledby={id} className="rounded-lg border border-border bg-card p-5 text-card-foreground md:p-6">
-      <h2 id={id} className="mb-4 text-lg font-semibold text-foreground">
-        {title}
-      </h2>
-      <div className="grid gap-4 @xl:grid-cols-2 @xl:gap-x-6">{children}</div>
-    </section>
-  );
-}
-
 export function ItemForm({ kind, mode, action, initial, currencies, cancelHref }: Props) {
   const [state, formAction, pending] = useActionState(action, INITIAL);
   const errors: FieldError[] = useMemo(() => (state.status === "error" ? state.errors : []), [state]);
   // After a failed save the server returns what was typed; otherwise show the starting values.
   const values: FormValues = state.status === "error" ? state.values : initial;
+  const detailsRef = useRef<HTMLDetailsElement>(null);
+  const [startOpen] = useState(() => hasExtras(kind, initial));
 
   const text = (key: string): string => {
     const value = values[key];
@@ -58,12 +62,17 @@ export function ItemForm({ kind, mode, action, initial, currencies, cancelHref }
   const error = (key: string): string | undefined => errors.find((e) => e.field === key)?.message;
   const formError = error("form");
 
-  // A single error has no summary, so move focus to its field.
   useEffect(() => {
+    // Focus and the summary's #field links fail inside a closed <details>, so open it first.
+    const extraKeys = [...COMMON_EXTRAS, ...KIND_EXTRAS[kind], ...ERROR_ONLY_EXTRAS];
+    if (detailsRef.current && errors.some((e) => extraKeys.includes(e.field))) {
+      detailsRef.current.open = true;
+    }
+    // A single error has no summary, so move focus to its field.
     if (errors.length === 1 && errors[0] && errors[0].field !== "form") {
       document.getElementById(errors[0].field)?.focus();
     }
-  }, [errors]);
+  }, [errors, kind]);
 
   const common = { text, error };
 
@@ -76,7 +85,7 @@ export function ItemForm({ kind, mode, action, initial, currencies, cancelHref }
         </p>
       ) : null}
 
-      <FormSection id="basics-heading" title={strings.item.sections.basics}>
+      <div className={`${GRID} rounded-lg border border-border bg-card p-5 text-card-foreground md:p-6`}>
         <TextField
           id="name"
           label={nameLabel(kind)}
@@ -86,47 +95,50 @@ export function ItemForm({ kind, mode, action, initial, currencies, cancelHref }
           className={SPAN}
         />
         {kind === "subscription" && <SubscriptionFields {...common} currencies={currencies} />}
-        {kind === "recurring" && <RecurringFields {...common} currencies={currencies} />}
+        {kind === "recurring" && <RecurringFields {...common} />}
         {kind === "warranty" && <WarrantyFields {...common} />}
         {kind === "reminder" && <ReminderFields {...common} />}
         {kind === "savings" && <SavingsFields {...common} currencies={currencies} editing={mode === "edit"} />}
-      </FormSection>
 
-      <FormSection id="more-heading" title={strings.item.sections.extras}>
-        <TextField
-          id="emoji"
-          label={f.emoji}
-          hint={f.emojiHint}
-          defaultValue={text("emoji")}
-          error={error("emoji")}
-          required={false}
-          maxLength={8}
-        />
-        <TextField
-          id="category"
-          label={f.category}
-          hint={f.categoryHint}
-          defaultValue={text("category")}
-          error={error("category")}
-          required={false}
-          maxLength={40}
-        />
-        <TextAreaField
-          id="notes"
-          label={f.notes}
-          defaultValue={text("notes")}
-          error={error("notes")}
-          required={false}
-          maxLength={2000}
-          className={SPAN}
-        />
-      </FormSection>
-
-      <ReminderDays
-        useDefault={text("useDefaultOffsets") === "on"}
-        selected={Array.isArray(values.offsets) ? values.offsets : []}
-        error={error("offsets")}
-      />
+        <details ref={detailsRef} open={startOpen} className={`group min-w-0 border-t border-border pt-4 ${SPAN}`}>
+          <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between font-medium text-foreground [&::-webkit-details-marker]:hidden">
+            {strings.item.sections.more}
+            <ChevronDown
+              aria-hidden="true"
+              size={20}
+              className="transition-transform duration-[var(--duration-fast)] group-open:rotate-180"
+            />
+          </summary>
+          <div className={`mt-2 ${GRID}`}>
+            {kind === "subscription" && <SubscriptionExtras {...common} />}
+            {kind === "recurring" && <RecurringExtras {...common} currencies={currencies} />}
+            {kind === "warranty" && <WarrantyExtras {...common} />}
+            {kind === "savings" && <SavingsExtras {...common} editing={mode === "edit"} />}
+            <TextField id="emoji" label={f.emoji} defaultValue={text("emoji")} error={error("emoji")} maxLength={8} />
+            <TextField
+              id="category"
+              label={f.category}
+              placeholder={strings.item.placeholders.category[kind]}
+              defaultValue={text("category")}
+              error={error("category")}
+              maxLength={40}
+            />
+            <TextAreaField
+              id="notes"
+              label={f.notes}
+              defaultValue={text("notes")}
+              error={error("notes")}
+              maxLength={2000}
+              className={SPAN}
+            />
+            <ReminderDays
+              useDefault={text("useDefaultOffsets") === "on"}
+              selected={Array.isArray(values.offsets) ? values.offsets : []}
+              error={error("offsets")}
+            />
+          </div>
+        </details>
+      </div>
 
       <div className="flex flex-col gap-3 sm:flex-row-reverse sm:justify-start">
         <button type="submit" disabled={pending} className={`${PRIMARY_BUTTON} sm:min-w-40`}>
@@ -138,6 +150,15 @@ export function ItemForm({ kind, mode, action, initial, currencies, cancelHref }
       </div>
     </form>
   );
+}
+
+/** Open "More details" when the item already has optional values. Auto-renew is ignored: "on" is the normal default. */
+function hasExtras(kind: ItemKind, values: FormValues): boolean {
+  const filled = (key: string) => {
+    const value = values[key];
+    return typeof value === "string" && value !== "";
+  };
+  return [...COMMON_EXTRAS, ...KIND_EXTRAS[kind]].some(filled) || values.useDefaultOffsets !== "on";
 }
 
 function nameLabel(kind: ItemKind): string {
@@ -186,46 +207,58 @@ function SubscriptionFields({ text, error, currencies }: FieldProps & { currenci
         defaultValue={text("nextBillingDate")}
         error={error("nextBillingDate")}
       />
+    </>
+  );
+}
+
+function SubscriptionExtras({ text, error }: FieldProps) {
+  return (
+    <>
       <TextField
         id="paymentMethod"
         label={f.paymentMethod}
         hint={f.paymentMethodHint}
+        placeholder={strings.item.placeholders.paymentMethod}
         defaultValue={text("paymentMethod")}
         error={error("paymentMethod")}
-        required={false}
         maxLength={80}
       />
       <TextField
         id="cancelUrl"
         label={f.cancelUrl}
-        hint={f.cancelUrlHint}
+        placeholder={strings.item.placeholders.cancelUrl}
         type="url"
         inputMode="url"
         defaultValue={text("cancelUrl")}
         error={error("cancelUrl")}
-        required={false}
       />
       <CheckboxField id="autoRenew" label={f.autoRenew} defaultChecked={text("autoRenew") === "on"} className={SPAN} />
     </>
   );
 }
 
-function RecurringFields({ text, error, currencies }: FieldProps & { currencies: Option[] }) {
+function RecurringFields({ text, error }: FieldProps) {
   return (
     <>
       <TextField id="lastPurchasedOn" label={f.lastPurchasedOn} type="date" defaultValue={text("lastPurchasedOn")} error={error("lastPurchasedOn")} />
       <TextField
         id="durationDays"
         label={f.durationDays}
-        hint={f.durationHint}
         defaultValue={text("durationDays")}
         error={error("durationDays")}
         inputMode="numeric"
       />
-      <TextField id="usualPrice" label={f.usualPrice} defaultValue={text("usualPrice")} error={error("usualPrice")} inputMode="decimal" required={false} />
+    </>
+  );
+}
+
+function RecurringExtras({ text, error, currencies }: FieldProps & { currencies: Option[] }) {
+  return (
+    <>
+      <TextField id="usualPrice" label={f.usualPrice} defaultValue={text("usualPrice")} error={error("usualPrice")} inputMode="decimal" />
       <SelectField id="usualCurrency" label={f.currency} defaultValue={text("usualCurrency")} error={error("usualCurrency")} options={currencies} />
-      <TextField id="usualStore" label={f.usualStore} defaultValue={text("usualStore")} error={error("usualStore")} required={false} maxLength={80} />
-      <TextField id="usualQuantity" label={f.usualQuantity} defaultValue={text("usualQuantity")} error={error("usualQuantity")} inputMode="decimal" required={false} />
+      <TextField id="usualStore" label={f.usualStore} defaultValue={text("usualStore")} error={error("usualStore")} maxLength={80} />
+      <TextField id="usualQuantity" label={f.usualQuantity} defaultValue={text("usualQuantity")} error={error("usualQuantity")} inputMode="decimal" />
     </>
   );
 }
@@ -235,8 +268,13 @@ function WarrantyFields({ text, error }: FieldProps) {
     <>
       <TextField id="purchasedOn" label={f.purchasedOn} type="date" defaultValue={text("purchasedOn")} error={error("purchasedOn")} />
       <TextField id="warrantyMonths" label={f.warrantyMonths} defaultValue={text("warrantyMonths")} error={error("warrantyMonths")} inputMode="numeric" />
-      <TextField id="serialNumber" label={f.serialNumber} defaultValue={text("serialNumber")} error={error("serialNumber")} required={false} maxLength={80} />
     </>
+  );
+}
+
+function WarrantyExtras({ text, error }: FieldProps) {
+  return (
+    <TextField id="serialNumber" label={f.serialNumber} defaultValue={text("serialNumber")} error={error("serialNumber")} maxLength={80} />
   );
 }
 
@@ -266,26 +304,23 @@ function SavingsFields({ text, error, currencies, editing }: FieldProps & { curr
         disabled={editing}
         hint={editing ? f.currencyLocked : undefined}
       />
+    </>
+  );
+}
+
+function SavingsExtras({ text, error, editing }: FieldProps & { editing: boolean }) {
+  return (
+    <>
       {!editing ? (
         <TextField
           id="startingAmount"
           label={f.startingAmount}
-          hint={f.startingAmountHint}
           defaultValue={text("startingAmount")}
           error={error("startingAmount")}
           inputMode="decimal"
-          required={false}
         />
       ) : null}
-      <TextField
-        id="deadline"
-        label={f.deadline}
-        hint={f.deadlineHint}
-        type="date"
-        defaultValue={text("deadline")}
-        error={error("deadline")}
-        required={false}
-      />
+      <TextField id="deadline" label={f.deadline} type="date" defaultValue={text("deadline")} error={error("deadline")} />
     </>
   );
 }
@@ -352,33 +387,24 @@ function ReminderDays({
   const chosen = selected.map(Number);
   const choices = [...new Set<number>([...OFFSET_CHOICES, ...chosen.filter(Number.isInteger)])].sort((a, b) => b - a);
   return (
-    <section aria-labelledby="reminders-heading" className="rounded-lg border border-border bg-card p-5 text-card-foreground md:p-6">
-      <h2 id="reminders-heading" className="mb-2 text-lg font-semibold text-foreground">
-        {strings.item.sections.reminders}
-      </h2>
-      <div className="flex flex-col gap-1">
-        <label htmlFor="useDefaultOffsets" className="flex min-h-11 items-center gap-3 font-medium text-foreground">
-          <input
-            id="useDefaultOffsets"
-            name="useDefaultOffsets"
-            type="checkbox"
-            checked={useDefault}
-            onChange={(event) => setUseDefault(event.target.checked)}
-            aria-describedby="useDefaultOffsets-hint"
-            className="size-5 accent-primary"
-          />
-          {f.useDefaultReminders}
-        </label>
-        <p id="useDefaultOffsets-hint" className="text-sm text-muted-foreground">
-          {f.useDefaultRemindersHint}
-        </p>
-      </div>
+    <div className={`min-w-0 ${SPAN}`}>
+      <label htmlFor="useDefaultOffsets" className="flex min-h-11 items-center gap-3 font-medium text-foreground">
+        <input
+          id="useDefaultOffsets"
+          name="useDefaultOffsets"
+          type="checkbox"
+          checked={useDefault}
+          onChange={(event) => setUseDefault(event.target.checked)}
+          className="size-5 accent-primary"
+        />
+        {f.useDefaultReminders}
+      </label>
       {!useDefault ? (
         <fieldset
           id="offsets"
           tabIndex={-1}
           aria-describedby={error ? "offsets-error" : undefined}
-          className="mt-4 grid gap-x-6 @xl:grid-cols-2"
+          className="mt-2 grid gap-x-6 @xl:grid-cols-2"
         >
           <legend className="mb-1 font-medium text-foreground">{strings.settings.remindersLegend}</legend>
           {choices.map((days) => (
@@ -400,6 +426,6 @@ function ReminderDays({
           ) : null}
         </fieldset>
       ) : null}
-    </section>
+    </div>
   );
 }
