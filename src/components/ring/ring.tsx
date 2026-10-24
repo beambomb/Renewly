@@ -3,10 +3,11 @@ import { Ban, Check, Clock, OctagonAlert, Pause, TriangleAlert } from "lucide-re
 import { initialsOf } from "@/lib/initials";
 import type { ItemStatus, RingState, RingViewModel } from "@/lib/rings/ring";
 
-export type RingSize = "md" | "lg";
+export type RingSize = "sm" | "md" | "lg";
 
 /** Pixel geometry per size. The ring is drawn in a square viewBox. */
 const GEOMETRY: Record<RingSize, { box: number; stroke: number; logo: number }> = {
+  sm: { box: 56, stroke: 5, logo: 32 },
   md: { box: 96, stroke: 8, logo: 56 },
   lg: { box: 160, stroke: 10, logo: 96 },
 };
@@ -173,16 +174,23 @@ interface RingCardProps extends RingProps {
   detail?: ReactNode;
 }
 
+/** The time-left text led by a state glyph, so state is never conveyed by colour alone. */
+export function TimeLabel({ vm, status }: { vm: RingViewModel; status: ItemStatus }) {
+  return (
+    <p className={`flex items-center gap-1 text-sm font-medium ${TEXT_CLASS[vm.state]}`}>
+      <StateGlyph state={vm.state} paused={status === "paused"} />
+      <span>{vm.label}</span>
+    </p>
+  );
+}
+
 /** Ring with the name and a time-left line led by a state glyph (never colour alone). */
 export function RingCard({ name, vm, logo, size = "md", status, detail }: RingCardProps) {
   return (
     <div className="flex flex-col items-center gap-2 text-center" data-state={vm.state}>
       <Ring name={name} vm={vm} logo={logo} size={size} />
       <p className="max-w-full truncate text-base font-medium text-card-foreground">{name}</p>
-      <p className={`flex items-center gap-1 text-sm font-medium ${TEXT_CLASS[vm.state]}`}>
-        <StateGlyph state={vm.state} paused={status === "paused"} />
-        <span>{vm.label}</span>
-      </p>
+      <TimeLabel vm={vm} status={status} />
       {detail ? <div className="text-sm text-muted-foreground">{detail}</div> : null}
     </div>
   );

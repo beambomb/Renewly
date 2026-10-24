@@ -5,6 +5,7 @@ import {
   addYears,
   daysInMonth,
   diffDays,
+  formatDisplayDate,
   fromEpochDay,
   isLeapYear,
   isValidDate,
@@ -119,6 +120,14 @@ describe("adding years", () => {
   it("goes backwards", () => {
     expect(addYears("2028-02-29", -1)).toBe("2027-02-28");
     expect(addYears("2026-10-24", -2)).toBe("2024-10-24");
+  });
+});
+
+describe("formatDisplayDate", () => {
+  it("formats a calendar date the same everywhere", () => {
+    expect(formatDisplayDate("2026-10-24")).toBe("24 Oct 2026");
+    expect(formatDisplayDate("2028-02-29")).toBe("29 Feb 2028");
+    expect(formatDisplayDate("2026-01-05")).toBe("5 Jan 2026");
   });
 });
 

@@ -106,6 +106,14 @@ export function compareDates(a: CalendarDate, b: CalendarDate): number {
   return toEpochDay(a) - toEpochDay(b);
 }
 
+/** "24 Oct 2026" for display. Calendar dates carry no time zone, so format in UTC. */
+export function formatDisplayDate(date: CalendarDate, locale = "en-GB"): string {
+  const { year, month, day } = parseDate(date);
+  return new Intl.DateTimeFormat(locale, { day: "numeric", month: "short", year: "numeric", timeZone: "UTC" }).format(
+    new Date(Date.UTC(year, month - 1, day)),
+  );
+}
+
 export function isValidTimeZone(timeZone: string): boolean {
   try {
     new Intl.DateTimeFormat("en-US", { timeZone });
