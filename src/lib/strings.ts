@@ -176,6 +176,33 @@ export const strings = {
     aria: (name: string, percent: number, saved: string, target: string, status: string) =>
       `${name}, ${percent} percent saved, ${saved} of ${target}, status: ${status}`,
   },
+  savingsEntry: {
+    title: "Update savings",
+    actions: { deposit: "Add money", withdraw: "Take out", correct: "Set total" },
+    fields: {
+      amount: "Amount",
+      newTotal: "New total saved",
+      date: "Date",
+      note: "Note",
+      noteHint: "Optional, for example Bonus or Monthly top-up.",
+    },
+    submit: "Save",
+    submitting: "Saving...",
+    saved: "Savings updated.",
+    history: "History",
+    historyEmpty: "No entries yet.",
+    types: { deposit: "Deposit", withdrawal: "Withdrawal", adjustment: "Correction" },
+    errors: {
+      actionInvalid: "Choose what you want to do.",
+      amountInvalid: "Enter an amount above 0, like 500000 or 500.000.",
+      notEnough: "You cannot take out more than you have saved.",
+      sameTotal: "That is already the saved total.",
+      dateInvalid: "Enter a valid date.",
+      dateInFuture: "The date cannot be in the future.",
+      noteTooLong: "A note can be at most 200 characters.",
+      saveFailed: "We could not save this change. Try again.",
+    },
+  },
   ring: {
     daysLeft: (n: number) => `${n} days left`,
     oneDayLeft: "1 day left",
