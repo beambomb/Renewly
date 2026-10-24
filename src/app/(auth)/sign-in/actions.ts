@@ -1,6 +1,7 @@
 "use server";
 
-import { getPublicEnv } from "@/lib/env";
+import { headers } from "next/headers";
+import { originFromHeaders } from "@/lib/request-origin";
 import { safeRedirectPath } from "@/lib/auth/redirect";
 import { signInSchema } from "@/lib/schemas/auth";
 import { createClient } from "@/lib/supabase/server";
@@ -33,10 +34,16 @@ export async function requestMagicLink(_previous: SignInState, formData: FormDat
 
   try {
     const supabase = await createClient();
-    const siteUrl = getPublicEnv().NEXT_PUBLIC_SITE_URL.replace(/\/$/, "");
+    // The link comes back to wherever the app is running; no extra setting needed.
+    const requestHeaders = await headers();
+    const origin = originFromHeaders({
+      host: requestHeaders.get("host"),
+      forwardedHost: requestHeaders.get("x-forwarded-host"),
+      forwardedProto: requestHeaders.get("x-forwarded-proto"),
+    });
     const { error } = await supabase.auth.signInWithOtp({
       email,
-      options: { emailRedirectTo: `${siteUrl}/auth/callback?next=${encodeURIComponent(next)}` },
+      options: origin ? { emailRedirectTo: `${origin}/auth/callback?next=${encodeURIComponent(next)}` } : {},
     });
     if (error) return { status: "error", email, message: strings.auth.sendFailed };
   } catch {

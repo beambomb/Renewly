@@ -1,8 +1,8 @@
 import { z } from "zod";
 
 /**
- * Public (browser-safe) configuration, validated with zod.
- * Error messages name the variables only, never their values.
+ * Public (browser-safe) configuration: just the Supabase project URL and its
+ * publishable (anon) key. Error messages name the variables only, never values.
  */
 const publicEnvSchema = z.object({
   NEXT_PUBLIC_SUPABASE_URL: z
@@ -15,7 +15,6 @@ const publicEnvSchema = z.object({
       "must be https (http only for localhost)",
     ),
   NEXT_PUBLIC_SUPABASE_ANON_KEY: z.string().min(20),
-  NEXT_PUBLIC_SITE_URL: z.url(),
 });
 
 export type PublicEnv = z.infer<typeof publicEnvSchema>;
@@ -28,7 +27,6 @@ export function parsePublicEnv(raw: Record<string, string | undefined>): PublicE
   const result = publicEnvSchema.safeParse({
     NEXT_PUBLIC_SUPABASE_URL: raw.NEXT_PUBLIC_SUPABASE_URL || undefined,
     NEXT_PUBLIC_SUPABASE_ANON_KEY: raw.NEXT_PUBLIC_SUPABASE_ANON_KEY || undefined,
-    NEXT_PUBLIC_SITE_URL: raw.NEXT_PUBLIC_SITE_URL || undefined,
   });
   if (result.success) return { ok: true, env: result.data };
   const invalid = [...new Set(result.error.issues.map((issue) => String(issue.path[0])))];
@@ -43,7 +41,6 @@ export function readPublicEnv(): PublicEnvResult {
   return parsePublicEnv({
     NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL,
     NEXT_PUBLIC_SUPABASE_ANON_KEY: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
-    NEXT_PUBLIC_SITE_URL: process.env.NEXT_PUBLIC_SITE_URL,
   });
 }
 

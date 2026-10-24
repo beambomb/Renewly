@@ -4,13 +4,15 @@ import { parsePublicEnv } from "./env";
 const valid = {
   NEXT_PUBLIC_SUPABASE_URL: "https://abcdefgh.supabase.co",
   NEXT_PUBLIC_SUPABASE_ANON_KEY: "a-long-enough-public-anon-key-value",
-  NEXT_PUBLIC_SITE_URL: "https://renewly.example.com",
 };
 
 describe("parsePublicEnv", () => {
-  it("accepts a complete configuration", () => {
-    const result = parsePublicEnv(valid);
-    expect(result.ok).toBe(true);
+  it("accepts just the Supabase URL and key", () => {
+    expect(parsePublicEnv(valid).ok).toBe(true);
+  });
+
+  it("accepts the newer sb_publishable key format", () => {
+    expect(parsePublicEnv({ ...valid, NEXT_PUBLIC_SUPABASE_ANON_KEY: "sb_publishable_AbCdEfGhIjKlMnOpQrStUv_1234567" }).ok).toBe(true);
   });
 
   it("accepts http only for localhost", () => {
@@ -23,11 +25,7 @@ describe("parsePublicEnv", () => {
     const result = parsePublicEnv({});
     expect(result.ok).toBe(false);
     if (!result.ok) {
-      expect(result.invalid).toEqual([
-        "NEXT_PUBLIC_SUPABASE_URL",
-        "NEXT_PUBLIC_SUPABASE_ANON_KEY",
-        "NEXT_PUBLIC_SITE_URL",
-      ]);
+      expect(result.invalid).toEqual(["NEXT_PUBLIC_SUPABASE_URL", "NEXT_PUBLIC_SUPABASE_ANON_KEY"]);
     }
   });
 
@@ -37,11 +35,14 @@ describe("parsePublicEnv", () => {
     expect(JSON.stringify(result)).not.toContain("abcdefgh");
   });
 
-  it("rejects a too-short key and a bad site URL", () => {
-    const result = parsePublicEnv({ ...valid, NEXT_PUBLIC_SUPABASE_ANON_KEY: "short", NEXT_PUBLIC_SITE_URL: "not a url" });
-    expect(result).toEqual({
+  it("rejects a too-short key", () => {
+    expect(parsePublicEnv({ ...valid, NEXT_PUBLIC_SUPABASE_ANON_KEY: "short" })).toEqual({
       ok: false,
-      invalid: ["NEXT_PUBLIC_SUPABASE_ANON_KEY", "NEXT_PUBLIC_SITE_URL"],
+      invalid: ["NEXT_PUBLIC_SUPABASE_ANON_KEY"],
     });
+  });
+
+  it("ignores variables it does not need", () => {
+    expect(parsePublicEnv({ ...valid, NEXT_PUBLIC_SITE_URL: "not a url" }).ok).toBe(true);
   });
 });

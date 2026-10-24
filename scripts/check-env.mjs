@@ -13,7 +13,6 @@ if (!existsSync(file)) {
 const WATCHED = [
   "NEXT_PUBLIC_SUPABASE_URL",
   "NEXT_PUBLIC_SUPABASE_ANON_KEY",
-  "NEXT_PUBLIC_SITE_URL",
   "NEXT_PUBLIC_VAPID_PUBLIC_KEY",
   "REMINDER_TRIGGER_SECRET",
   "SUPABASE_DB_URL",
@@ -84,17 +83,6 @@ else if (key.split(".").length === 3) {
     false,
     `unrecognised format (${hints.join("; ")}). Expected a JWT (3 parts split by dots, starts with eyJ) or sb_publishable_...`,
   );
-}
-
-const site = process.env.NEXT_PUBLIC_SITE_URL;
-if (!site) report("NEXT_PUBLIC_SITE_URL", false, "not set (use http://localhost:3000 for local development)");
-else {
-  try {
-    new URL(site);
-    report("NEXT_PUBLIC_SITE_URL", true, site.startsWith("http://localhost") ? "localhost" : "valid URL");
-  } catch {
-    report("NEXT_PUBLIC_SITE_URL", false, "is not a valid URL");
-  }
 }
 
 // Live check: ask your own Supabase project whether it accepts the key. Prints the HTTP status only.
