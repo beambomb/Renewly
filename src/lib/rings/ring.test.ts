@@ -94,6 +94,12 @@ describe("inactive items", () => {
     expect(vm.label).toBe("Paused");
   });
 
+  it("shows completed reminders as done", () => {
+    const vm = ringOn("2026-11-20", { status: "done", kind: "reminder" });
+    expect(vm.state).toBe("inactive");
+    expect(vm.label).toBe("Done");
+  });
+
   it("shows cancelled items without urgency", () => {
     const vm = ringOn("2026-10-30", { status: "cancelled" });
     expect(vm.state).toBe("inactive");

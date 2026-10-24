@@ -1,8 +1,8 @@
 import { diffDays, type CalendarDate } from "@/lib/dates/calendar";
 import { strings } from "@/lib/strings";
 
-export type ItemKind = "subscription" | "recurring" | "warranty";
-export type ItemStatus = "active" | "paused" | "cancelled";
+export type ItemKind = "subscription" | "recurring" | "warranty" | "reminder" | "savings";
+export type ItemStatus = "active" | "paused" | "cancelled" | "done";
 export type RingState = "comfortable" | "soon" | "urgent" | "overdue" | "inactive";
 
 /** A ring is "soon" at or below this fraction of the period left. */
@@ -38,6 +38,7 @@ export interface RingViewModel {
 function labelFor(input: RingInput, daysLeft: number): string {
   if (input.status === "paused") return strings.ring.paused;
   if (input.status === "cancelled") return strings.ring.cancelled;
+  if (input.status === "done") return strings.ring.done;
 
   const isWarranty = input.kind === "warranty";
   if (daysLeft < 0) {
