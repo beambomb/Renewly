@@ -10,10 +10,10 @@ Work strictly in order. Each task: objective, files, tests, manual check. Tick t
   - Tests: `node scripts/check-design-tokens.mjs` (tokens present, AA contrast, both themes).
   - Manual: open `docs/design-system.md`, see commit hash and token block.
 
-- [ ] **2.1 Scaffold Next.js, strict TS, lint, Vitest**
+- [x] **2.1 Scaffold Next.js, strict TS, lint, Vitest**
   - Objective: pinned-version app that builds. Files: `package.json`, `tsconfig.json`, `eslint.config.mjs`, `vitest.config.ts`, `src/app/layout.tsx`, `src/app/page.tsx`.
   - Tests: smoke test. Manual: `npm run dev` shows page.
-- [ ] **2.2 Tokens, fonts, strings, env example, security headers**
+- [x] **2.2 Tokens, fonts, strings, env example, security headers**
   - Objective: map design tokens to CSS variables and Tailwind theme; IBM Plex Sans via `next/font`; `strings.ts`; `.env.example`; headers in `next.config.ts`; `check:tokens` script.
   - Files: `src/app/globals.css`, `tailwind` config/theme, `src/lib/strings.ts`, `.env.example`, `next.config.ts`.
   - Tests: header unit test; `npm run check:tokens`. Manual: response headers in browser devtools.

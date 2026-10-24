@@ -2,8 +2,8 @@
 
 ## Status
 - Done: git repo initialised; design reference cloned (git-ignored); design system generated and written; token contrast script passes; steering and spec files written.
-- Task 1.1 complete (committed locally).
-- Next: 2.1 scaffold Next.js app.
+- Tasks 1.1, 2.1, 2.2 complete (committed locally). lint, 5 unit tests, `next build` pass; response headers (CSP, nosniff, HSTS, frame deny) checked against `next start`.
+- Next: 3.1 core schema migration.
 
 ## Decisions
 - 2026-10-23: Style = Minimalism & Swiss, IBM Plex Sans, navy/gold palette. Reason: second generator query (narrower) fit dashboards and has low a11y risk; the first query returned Glassmorphism with a landing-page pattern. Rejected: Glassmorphism/Fira (blur hurts contrast, not a fit for dense ring grid).
@@ -21,7 +21,12 @@
 - Dark theme values are derived by me (generator emitted only light for the chosen style).
 
 ## Known issues and NOT verified
-- Nothing runtime-verified yet beyond the token contrast check.
+- TypeScript is pinned to 6.0.3, not 7.0.2: typescript-eslint (via eslint-config-next) throws on TS 7. Revisit when it supports 7.1+.
+- Vitest 5 / rolldown: npm skipped the Windows optional binding on first install. Fix used: `npm install --no-save @rolldown/binding-win32-x64-msvc@1.2.15`. If `npm test` fails with "Cannot find module @rolldown/binding-wasm32-wasi", run that. Check on a clean `npm ci` before relying on it (Vercel runs Linux, unaffected).
+- npm warns EBADENGINE: some dev dependency wants Node ^24.15 or ^22.22.2, this machine has 24.7.0. Tests and build work; upgrading Node removes the warning.
+- CSP uses `'unsafe-inline'` for scripts and styles (static pages, no nonce yet). A nonce-based CSP via middleware is a possible hardening step.
+- `.kiro/settings/` (local permissions) is git-ignored.
+- Font loading and visual rendering not checked in a browser yet.
 
 ## How to resume
 1. Read `.kiro/steering/project.md`, this file, `docs/specs/renewly/tasks.md`.
