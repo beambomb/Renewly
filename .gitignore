@@ -4,3 +4,8 @@ design-reference/
 node_modules/
 .next/
 
+next-env.d.ts
+*.tsbuildinfo
+coverage/
+.vercel/
+.kiro/settings/

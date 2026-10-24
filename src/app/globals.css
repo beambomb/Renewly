@@ -1,0 +1,156 @@
+@import "tailwindcss";
+
+/*
+ * Design tokens. Source of truth: docs/design-system.md (kept in sync by
+ * scripts/check-design-tokens.mjs). Components use ONLY these tokens.
+ * `--color-*: initial` removes Tailwind's default palette so raw palette
+ * utilities (bg-red-500, ...) cannot be used by accident.
+ */
+@theme {
+  --color-*: initial;
+
+  --color-background: #F8FAFC;
+  --color-foreground: #020617;
+  --color-card: #FFFFFF;
+  --color-card-foreground: #020617;
+  --color-muted: #E8ECF1;
+  --color-muted-foreground: #475569;
+  --color-border: #CBD5E1;
+  --color-primary: #0F172A;
+  --color-on-primary: #FFFFFF;
+  --color-secondary: #1E3A8A;
+  --color-on-secondary: #FFFFFF;
+  --color-accent: #A16207;
+  --color-on-accent: #FFFFFF;
+  --color-destructive: #DC2626;
+  --color-on-destructive: #FFFFFF;
+  --color-focus: #1E3A8A;
+  --color-status-ok: #15803D;
+  --color-status-soon: #B45309;
+  --color-status-urgent: #C2410C;
+  --color-status-overdue: #DC2626;
+  --color-track: #CBD5E1;
+
+  --font-sans: var(--font-plex), ui-sans-serif, system-ui, sans-serif;
+
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+  --radius-full: 9999px;
+
+  --shadow-sm: 0 1px 2px rgb(2 6 23 / 0.08);
+  --shadow-md: 0 4px 12px rgb(2 6 23 / 0.1);
+
+  --ease-standard: cubic-bezier(0.2, 0, 0, 1);
+  --ease-exit: cubic-bezier(0.4, 0, 1, 1);
+
+  --breakpoint-xs: 375px;
+}
+
+:root {
+  --duration-press: 120ms;
+  --duration-fast: 180ms;
+  --duration-base: 250ms;
+  --duration-ring: 600ms;
+  --icon-sm: 16px;
+  --icon-md: 20px;
+  --icon-lg: 24px;
+  --nav-height: 64px;
+  color-scheme: light;
+}
+
+.dark {
+  --color-background: #0F172A;
+  --color-foreground: #F8FAFC;
+  --color-card: #192134;
+  --color-card-foreground: #F8FAFC;
+  --color-muted: #101A34;
+  --color-muted-foreground: #94A3B8;
+  --color-border: #334155;
+  --color-primary: #F8FAFC;
+  --color-on-primary: #0F172A;
+  --color-secondary: #93C5FD;
+  --color-on-secondary: #0F172A;
+  --color-accent: #FACC15;
+  --color-on-accent: #020617;
+  --color-destructive: #F87171;
+  --color-on-destructive: #020617;
+  --color-focus: #93C5FD;
+  --color-status-ok: #4ADE80;
+  --color-status-soon: #FBBF24;
+  --color-status-urgent: #FB923C;
+  --color-status-overdue: #F87171;
+  --color-track: #334155;
+  color-scheme: dark;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not(.light) {
+    --color-background: #0F172A;
+    --color-foreground: #F8FAFC;
+    --color-card: #192134;
+    --color-card-foreground: #F8FAFC;
+    --color-muted: #101A34;
+    --color-muted-foreground: #94A3B8;
+    --color-border: #334155;
+    --color-primary: #F8FAFC;
+    --color-on-primary: #0F172A;
+    --color-secondary: #93C5FD;
+    --color-on-secondary: #0F172A;
+    --color-accent: #FACC15;
+    --color-on-accent: #020617;
+    --color-destructive: #F87171;
+    --color-on-destructive: #020617;
+    --color-focus: #93C5FD;
+    --color-status-ok: #4ADE80;
+    --color-status-soon: #FBBF24;
+    --color-status-urgent: #FB923C;
+    --color-status-overdue: #F87171;
+    --color-track: #334155;
+    color-scheme: dark;
+  }
+}
+
+html {
+  scroll-padding-bottom: calc(var(--nav-height) + 16px);
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  background: var(--color-background);
+  color: var(--color-foreground);
+  font-family: var(--font-sans);
+  font-size: 1rem;
+  line-height: 1.5;
+  overscroll-behavior-y: contain;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Visible focus on every interactive element, never removed. */
+:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+}
+
+button,
+a,
+summary,
+[role="button"] {
+  cursor: pointer;
+}
+
+button:disabled,
+[aria-disabled="true"] {
+  cursor: not-allowed;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
