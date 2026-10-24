@@ -64,21 +64,21 @@ Sections (fixed list for now): subscription, reminder, savings (tabungan), recur
 
 - [x] **7.1 Item zod schemas and DB mapping for all five kinds** (shared client/server) - tests: each kind, invalid cases, https cancel link, IDR amounts.
 - [x] **7.2 Date derivation and server actions** create/update/delete with derived `period_start`/`due_date` - tests: derivation per kind.
-- [ ] **7.3 Add flow: section picker sheet** (five large options, one-thumb)
-- [ ] **7.4 Subscription form**
-- [ ] **7.5 Recurring purchase form**
-- [ ] **7.6 Warranty form** (expiry computed from length)
-- [ ] **7.7 Reminder form** (one-off or repeating, "mark done")
-- [ ] **7.8 Savings goal form** (name, target, starting amount, optional deadline)
-- [ ] **7.9 Detail pages per section** (time ring for subscription, recurring, warranty, reminder; savings progress card with entry history; edit, pause/resume/cancel, delete confirm)
-- [ ] **7.10 Savings entries**: deposit, withdraw, correct the total - tests: arithmetic, never below zero, goal reached state.
+- [x] **7.3 Add flow: section picker sheet** (five large options, one-thumb)
+- [x] **7.4 Subscription form**
+- [x] **7.5 Recurring purchase form**
+- [x] **7.6 Warranty form** (expiry computed from length)
+- [x] **7.7 Reminder form** (one-off or repeating, "mark done")
+- [x] **7.8 Savings goal form** (name, target, starting amount, optional deadline)
+- [x] **7.9 Detail pages per section** (time ring for subscription, recurring, warranty, reminder; savings progress card with entry history; edit, pause/resume/cancel, delete confirm)
+- [x] **7.10 Savings entries**: deposit, withdraw, correct the total - tests: arithmetic, never below zero, goal reached state.
 - [x] **7.11 Savings maths** (pure, `src/lib/savings`) - tests: percent, remaining, monthly need, completed, overdue.
 
 ## Phase 7: Dashboard
 
-- [ ] **8.1 Query + sort/filter/search logic** (pure) - tests: ordering, filters, search.
-- [ ] **8.2 Dashboard by section** (section tabs/chips, each section with its own layout: rings for time-based, progress cards for savings, compact rows for reminders), filters in URL, empty states
-- [ ] **8.3 Upcoming in 30 days + monthly cost summary**
+- [x] **8.1 Query + sort/filter/search logic** (pure) - tests: ordering, filters, search.
+- [x] **8.2 Dashboard by section** (section tabs/chips, each section with its own layout: rings for time-based, progress cards for savings, compact rows for reminders), filters in URL, empty states
+- [x] **8.3 Upcoming in 30 days + monthly cost summary**
 - [ ] **8.4 Performance check with 200 seeded items** (note measurements in NOTES.md)
 
 ## Phase 8: Files
