@@ -23,6 +23,26 @@ export const strings = {
   a11y: {
     skipToContent: "Skip to content",
   },
+  ring: {
+    daysLeft: (n: number) => `${n} days left`,
+    oneDayLeft: "1 day left",
+    dueToday: "Due today",
+    overdueBy: (n: number) => (n === 1 ? "Overdue by 1 day" : `Overdue by ${n} days`),
+    expiresToday: "Expires today",
+    expiredAgo: (n: number) => (n === 1 ? "Expired 1 day ago" : `Expired ${n} days ago`),
+    paused: "Paused",
+    cancelled: "Cancelled",
+    state: {
+      comfortable: "On track",
+      soon: "Coming up",
+      urgent: "Urgent",
+      overdue: "Overdue",
+      inactive: "Inactive",
+    },
+    aria: (name: string, label: string, percentLeft: number, state: string) =>
+      `${name}, ${label}, ${percentLeft} percent of the period left, status: ${state}`,
+    ariaInactive: (name: string, label: string) => `${name}, ${label}`,
+  },
 } as const;
 
 export type Strings = typeof strings;
