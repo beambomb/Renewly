@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
+import { PageHeader } from "@/components/shell/page-header";
 import { getUserContext } from "@/lib/data/context";
 import { createFormValues } from "@/lib/items/form-values";
 import { isItemKind } from "@/lib/items/types";
@@ -26,10 +27,12 @@ export default async function AddKindPage({ params }: { params: Promise<{ kind: 
   });
 
   return (
-    <div className="max-w-xl">
-      <h1 className="mb-6 text-[2rem] font-bold leading-tight text-foreground">
-        {strings.item.kinds[kind].name}
-      </h1>
+    <div className="mx-auto flex w-full max-w-3xl flex-col gap-8">
+      <PageHeader
+        eyebrow={strings.pages.addTitle}
+        title={strings.item.kinds[kind].name}
+        lead={strings.item.kinds[kind].description}
+      />
       <ItemForm
         kind={kind}
         mode="create"

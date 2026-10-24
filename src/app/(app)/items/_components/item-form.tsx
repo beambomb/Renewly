@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useActionState, useEffect, useMemo, useState } from "react";
+import { useActionState, useEffect, useMemo, useState, type ReactNode } from "react";
 import { FormErrorSummary } from "@/components/form/form-error-summary";
 import {
   CheckboxField,
@@ -20,6 +20,9 @@ import type { ItemFormState } from "../actions";
 
 const f = strings.item.fields;
 const INITIAL: ItemFormState = { status: "idle" };
+// Container-query variants (@xl) follow the form's own width, not the viewport,
+// because the sidebar takes 256px from 768px and would leave two cramped columns.
+const SPAN = "@xl:col-span-2";
 
 interface Props {
   kind: ItemKind;
@@ -28,6 +31,18 @@ interface Props {
   initial: FormValues;
   currencies: Option[];
   cancelHref: string;
+}
+
+/** A titled group of fields: one column when the form is narrow, two from 36rem of form width. */
+function FormSection({ id, title, children }: { id: string; title: string; children: ReactNode }) {
+  return (
+    <section aria-labelledby={id} className="rounded-lg border border-border bg-card p-5 text-card-foreground md:p-6">
+      <h2 id={id} className="mb-4 text-lg font-semibold text-foreground">
+        {title}
+      </h2>
+      <div className="grid gap-4 @xl:grid-cols-2 @xl:gap-x-6">{children}</div>
+    </section>
+  );
 }
 
 export function ItemForm({ kind, mode, action, initial, currencies, cancelHref }: Props) {
@@ -40,7 +55,6 @@ export function ItemForm({ kind, mode, action, initial, currencies, cancelHref }
     const value = values[key];
     return typeof value === "string" ? value : "";
   };
-  const checked = (key: string): boolean => text(key) === "on";
   const error = (key: string): string | undefined => errors.find((e) => e.field === key)?.message;
   const formError = error("form");
 
@@ -54,7 +68,7 @@ export function ItemForm({ kind, mode, action, initial, currencies, cancelHref }
   const common = { text, error };
 
   return (
-    <form action={formAction} noValidate className="flex flex-col gap-6">
+    <form action={formAction} noValidate className="@container flex flex-col gap-5">
       <FormErrorSummary errors={errors} />
       {formError ? (
         <p role="alert" className="rounded-md border border-destructive p-3 text-destructive">
@@ -62,29 +76,23 @@ export function ItemForm({ kind, mode, action, initial, currencies, cancelHref }
         </p>
       ) : null}
 
-      <section aria-labelledby="basics-heading" className="flex flex-col gap-4">
-        <h2 id="basics-heading" className="text-xl font-semibold text-foreground">
-          {strings.item.sections.basics}
-        </h2>
+      <FormSection id="basics-heading" title={strings.item.sections.basics}>
         <TextField
           id="name"
           label={nameLabel(kind)}
           defaultValue={text("name")}
           error={error("name")}
           maxLength={80}
-          autoComplete="off"
+          className={SPAN}
         />
         {kind === "subscription" && <SubscriptionFields {...common} currencies={currencies} />}
         {kind === "recurring" && <RecurringFields {...common} currencies={currencies} />}
         {kind === "warranty" && <WarrantyFields {...common} />}
         {kind === "reminder" && <ReminderFields {...common} />}
         {kind === "savings" && <SavingsFields {...common} currencies={currencies} editing={mode === "edit"} />}
-      </section>
+      </FormSection>
 
-      <section aria-labelledby="more-heading" className="flex flex-col gap-4">
-        <h2 id="more-heading" className="text-xl font-semibold text-foreground">
-          {strings.item.sections.extras}
-        </h2>
+      <FormSection id="more-heading" title={strings.item.sections.extras}>
         <TextField
           id="emoji"
           label={f.emoji}
@@ -110,17 +118,18 @@ export function ItemForm({ kind, mode, action, initial, currencies, cancelHref }
           error={error("notes")}
           required={false}
           maxLength={2000}
+          className={SPAN}
         />
-      </section>
+      </FormSection>
 
       <ReminderDays
-        useDefault={checked("useDefaultOffsets")}
+        useDefault={text("useDefaultOffsets") === "on"}
         selected={Array.isArray(values.offsets) ? values.offsets : []}
         error={error("offsets")}
       />
 
-      <div className="flex flex-col gap-3 sm:flex-row-reverse">
-        <button type="submit" disabled={pending} className={PRIMARY_BUTTON}>
+      <div className="flex flex-col gap-3 sm:flex-row-reverse sm:justify-start">
+        <button type="submit" disabled={pending} className={`${PRIMARY_BUTTON} sm:min-w-40`}>
           {pending ? strings.item.actions.saving : mode === "create" ? strings.item.actions.add : strings.item.actions.save}
         </button>
         <Link href={cancelHref} className={SECONDARY_BUTTON}>
@@ -157,10 +166,8 @@ function SubscriptionFields({ text, error, currencies }: FieldProps & { currenci
   const [cycle, setCycle] = useState(text("billingCycle") || "monthly");
   return (
     <>
-      <div className="grid grid-cols-[1fr_auto] gap-3">
-        <TextField id="price" label={f.price} defaultValue={text("price")} error={error("price")} inputMode="decimal" />
-        <SelectField id="currency" label={f.currency} defaultValue={text("currency")} error={error("currency")} options={currencies} />
-      </div>
+      <TextField id="price" label={f.price} defaultValue={text("price")} error={error("price")} inputMode="decimal" />
+      <SelectField id="currency" label={f.currency} defaultValue={text("currency")} error={error("currency")} options={currencies} />
       <BillingCycleSelect
         id="billingCycle"
         label={f.billingCycle}
@@ -169,9 +176,9 @@ function SubscriptionFields({ text, error, currencies }: FieldProps & { currenci
         error={error("billingCycle")}
         allowNone={false}
       />
-      {cycle === "custom" && (
+      {cycle === "custom" ? (
         <TextField id="cycleDays" label={f.cycleDays} defaultValue={text("cycleDays")} error={error("cycleDays")} inputMode="numeric" />
-      )}
+      ) : null}
       <TextField
         id="nextBillingDate"
         label={f.nextBillingDate}
@@ -179,7 +186,6 @@ function SubscriptionFields({ text, error, currencies }: FieldProps & { currenci
         defaultValue={text("nextBillingDate")}
         error={error("nextBillingDate")}
       />
-      <CheckboxField id="autoRenew" label={f.autoRenew} defaultChecked={text("autoRenew") === "on"} />
       <TextField
         id="paymentMethod"
         label={f.paymentMethod}
@@ -199,6 +205,7 @@ function SubscriptionFields({ text, error, currencies }: FieldProps & { currenci
         error={error("cancelUrl")}
         required={false}
       />
+      <CheckboxField id="autoRenew" label={f.autoRenew} defaultChecked={text("autoRenew") === "on"} className={SPAN} />
     </>
   );
 }
@@ -215,10 +222,8 @@ function RecurringFields({ text, error, currencies }: FieldProps & { currencies:
         error={error("durationDays")}
         inputMode="numeric"
       />
-      <div className="grid grid-cols-[1fr_auto] gap-3">
-        <TextField id="usualPrice" label={f.usualPrice} defaultValue={text("usualPrice")} error={error("usualPrice")} inputMode="decimal" required={false} />
-        <SelectField id="usualCurrency" label={f.currency} defaultValue={text("usualCurrency")} error={error("usualCurrency")} options={currencies} />
-      </div>
+      <TextField id="usualPrice" label={f.usualPrice} defaultValue={text("usualPrice")} error={error("usualPrice")} inputMode="decimal" required={false} />
+      <SelectField id="usualCurrency" label={f.currency} defaultValue={text("usualCurrency")} error={error("usualCurrency")} options={currencies} />
       <TextField id="usualStore" label={f.usualStore} defaultValue={text("usualStore")} error={error("usualStore")} required={false} maxLength={80} />
       <TextField id="usualQuantity" label={f.usualQuantity} defaultValue={text("usualQuantity")} error={error("usualQuantity")} inputMode="decimal" required={false} />
     </>
@@ -241,9 +246,9 @@ function ReminderFields({ text, error }: FieldProps) {
     <>
       <TextField id="date" label={f.reminderDate} type="date" defaultValue={text("date")} error={error("date")} />
       <BillingCycleSelect id="repeat" label={f.repeat} value={repeat} onChange={setRepeat} error={error("repeat")} allowNone />
-      {repeat === "custom" && (
+      {repeat === "custom" ? (
         <TextField id="cycleDays" label={f.cycleDays} defaultValue={text("cycleDays")} error={error("cycleDays")} inputMode="numeric" />
-      )}
+      ) : null}
     </>
   );
 }
@@ -251,6 +256,7 @@ function ReminderFields({ text, error }: FieldProps) {
 function SavingsFields({ text, error, currencies, editing }: FieldProps & { currencies: Option[]; editing: boolean }) {
   return (
     <>
+      <TextField id="targetAmount" label={f.targetAmount} defaultValue={text("targetAmount")} error={error("targetAmount")} inputMode="decimal" />
       <SelectField
         id="currency"
         label={f.currencyGoal}
@@ -258,10 +264,9 @@ function SavingsFields({ text, error, currencies, editing }: FieldProps & { curr
         error={error("currency")}
         options={currencies}
         disabled={editing}
-        hint={editing ? strings.item.fields.currencyLocked : undefined}
+        hint={editing ? f.currencyLocked : undefined}
       />
-      <TextField id="targetAmount" label={f.targetAmount} defaultValue={text("targetAmount")} error={error("targetAmount")} inputMode="decimal" />
-      {!editing && (
+      {!editing ? (
         <TextField
           id="startingAmount"
           label={f.startingAmount}
@@ -271,7 +276,7 @@ function SavingsFields({ text, error, currencies, editing }: FieldProps & { curr
           inputMode="decimal"
           required={false}
         />
-      )}
+      ) : null}
       <TextField
         id="deadline"
         label={f.deadline}
@@ -306,7 +311,7 @@ function BillingCycleSelect({
     ...BILLING_CYCLES.map((cycle) => ({ value: cycle, label: CYCLE_LABELS[cycle] })),
   ];
   return (
-    <div className="flex flex-col gap-2">
+    <div className="flex min-w-0 flex-col gap-2">
       <label htmlFor={id} className="font-medium text-foreground">
         {label}
       </label>
@@ -344,10 +349,11 @@ function ReminderDays({
   error?: string | undefined;
 }) {
   const [useDefault, setUseDefault] = useState(initialUseDefault);
-  const choices = [...new Set<number>([...OFFSET_CHOICES, ...selected.map(Number).filter(Number.isInteger)])].sort((a, b) => b - a);
+  const chosen = selected.map(Number);
+  const choices = [...new Set<number>([...OFFSET_CHOICES, ...chosen.filter(Number.isInteger)])].sort((a, b) => b - a);
   return (
-    <section aria-labelledby="reminders-heading" className="flex flex-col gap-3">
-      <h2 id="reminders-heading" className="text-xl font-semibold text-foreground">
+    <section aria-labelledby="reminders-heading" className="rounded-lg border border-border bg-card p-5 text-card-foreground md:p-6">
+      <h2 id="reminders-heading" className="mb-2 text-lg font-semibold text-foreground">
         {strings.item.sections.reminders}
       </h2>
       <div className="flex flex-col gap-1">
@@ -367,8 +373,13 @@ function ReminderDays({
           {f.useDefaultRemindersHint}
         </p>
       </div>
-      {!useDefault && (
-        <fieldset id="offsets" tabIndex={-1} aria-describedby={error ? "offsets-error" : undefined} className="flex flex-col gap-1">
+      {!useDefault ? (
+        <fieldset
+          id="offsets"
+          tabIndex={-1}
+          aria-describedby={error ? "offsets-error" : undefined}
+          className="mt-4 grid gap-x-6 @xl:grid-cols-2"
+        >
           <legend className="mb-1 font-medium text-foreground">{strings.settings.remindersLegend}</legend>
           {choices.map((days) => (
             <label key={days} className="flex min-h-11 items-center gap-3 text-foreground">
@@ -376,19 +387,19 @@ function ReminderDays({
                 type="checkbox"
                 name="offsets"
                 value={days}
-                defaultChecked={selected.map(Number).includes(days)}
+                defaultChecked={chosen.includes(days)}
                 className="size-5 accent-primary"
               />
               {strings.settings.offsetLabel(days)}
             </label>
           ))}
           {error ? (
-            <p id="offsets-error" className="text-sm font-medium text-destructive">
+            <p id="offsets-error" className="text-sm font-medium text-destructive @xl:col-span-2">
               {error}
             </p>
           ) : null}
         </fieldset>
-      )}
+      ) : null}
     </section>
   );
 }
