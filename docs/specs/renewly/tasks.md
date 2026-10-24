@@ -33,12 +33,12 @@ Work strictly in order. Each task: objective, files, tests, manual check. Tick t
 
 ## Phase 3: Pure logic (Vitest)
 
-- [ ] **4.1 Calendar-date utilities** (`todayIn`, add days/months with clamping, diff) - `src/lib/dates/*`; tests: DST zones, month ends, leap years.
-- [ ] **4.2 Billing cycles** (`nextBillingAfter`, `previousBilling`) - tests: 29/30/31 monthly, Feb 29 yearly, custom N, weekly.
-- [ ] **4.3 Ring view-model** (fraction, state, label, aria text) - `src/lib/rings/*`; tests: thresholds 30% and 3 days, overdue, today, paused, tiny totals.
-- [ ] **4.4 Money** (monthly normalisation, per-currency totals, formatting) - tests: all cycles, mixed currencies, rounding.
-- [ ] **4.5 Recurring intervals** (average interval, suggestion) - tests: <3 purchases, 10% threshold.
-- [ ] **4.6 Reminder planner** (which offsets fire today per timezone, skip paused, overdue handling) - `src/lib/reminders/plan.ts`; tests: day boundary, offsets, overdue, duplicates.
+- [x] **4.1 Calendar-date utilities** (`todayIn`, add days/months with clamping, diff) - `src/lib/dates/*`; tests: DST zones, month ends, leap years.
+- [x] **4.2 Billing cycles** (`nextBillingAfter`, `previousBilling`) - tests: 29/30/31 monthly, Feb 29 yearly, custom N, weekly.
+- [x] **4.3 Ring view-model** (fraction, state, label, aria text) - `src/lib/rings/*`; tests: thresholds 30% and 3 days, overdue, today, paused, tiny totals.
+- [x] **4.4 Money** (monthly normalisation, per-currency totals, formatting) - tests: all cycles, mixed currencies, rounding.
+- [x] **4.5 Recurring intervals** (average interval, suggestion) - tests: <3 purchases, 10% threshold.
+- [x] **4.6 Reminder planner** (which offsets fire today per timezone, skip paused, overdue handling) - `src/lib/reminders/plan.ts`; tests: day boundary, offsets, overdue, duplicates.
 
 ## Phase 4: UI shell and ring
 

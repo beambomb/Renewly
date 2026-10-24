@@ -65,7 +65,7 @@ All dates are calendar dates (`YYYY-MM-DD`) in the user's IANA timezone; "today"
 
 ## Reminder scheduling and idempotency
 
-1. The Edge Function runs hourly (pg_cron). For each user whose local time is within the send window (default 08:00-08:59 local), it considers active items with `due_date - max(offset) <= local_today`.
+1. The Edge Function runs hourly (pg_cron). For each user whose local hour is 08:00 or later (so a late or retried run the same day still catches up; the log prevents duplicates), it plans reminders with `planReminders` (`src/lib/reminders/plan.ts`). Offsets in the past are never back-filled. The overdue notice is only sent within 30 days of the due date.
 2. For each (item, offset in effective offsets) where `due_date - offset = local_today`: for each enabled channel, `insert into reminder_log (..., status 'claimed') on conflict do nothing returning id`. Only if a row was returned does it send.
 3. After a successful send the row becomes `sent`; on a definite provider failure it becomes `failed`, and failed rows are retried at most 3 times by updating them back to `claimed` with a retry counter (kept in the same unique key, so no duplicates). A crash between claim and send leaves `claimed`: such rows are not auto-resent after a timeout (at-most-once is preferred over duplicate email) and are surfaced in function logs by count only.
 4. In-app notification rows are created in the same transaction as the `in_app` claim.

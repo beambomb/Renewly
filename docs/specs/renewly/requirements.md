@@ -29,7 +29,8 @@ As a user I see time remaining as a ring with a logo and text.
 - WHEN an item has 30% or less left THE SYSTEM SHALL show the soon state.
 - WHEN an item has 3 or fewer days left THE SYSTEM SHALL show the urgent state (overrides soon).
 - WHEN the due date is past THE SYSTEM SHALL show the overdue state (overrides all) with text "Overdue by N days".
-- WHEN the due date is today THE SYSTEM SHALL show "Due today"; WHEN one day remains "1 day left".
+- WHEN the due date is today THE SYSTEM SHALL show "Due today" (warranties: "Expires today"); WHEN one day remains "1 day left"; WHEN a warranty has expired "Expired N days ago".
+- WHEN an item is paused or cancelled THE SYSTEM SHALL show "Paused" or "Cancelled" with no urgency state.
 - WHEN a ring is displayed THE SYSTEM SHALL always show text and a state glyph in addition to colour, and set an `aria-label` describing name, time left and state.
 - WHEN prefers-reduced-motion is set THE SYSTEM SHALL render the final ring state with no animation.
 - WHEN an item has no logo THE SYSTEM SHALL show the chosen emoji, otherwise up to two initials.

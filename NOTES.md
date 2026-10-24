@@ -2,9 +2,9 @@
 
 ## Status
 - Done: git repo initialised; design reference cloned (git-ignored); design system generated and written; token contrast script passes; steering and spec files written.
-- Tasks 1.1, 2.1, 2.2, 3.1-3.5 complete (committed locally). lint, 5 unit tests, `next build` pass; response headers (CSP, nosniff, HSTS, frame deny) checked against `next start`.
+- Tasks 1.1, 2.1, 2.2, 3.1-3.5, 4.1-4.6 complete (committed locally). Pure logic in `src/lib/{dates,rings,money,purchases,reminders}`: 117 unit tests pass, lint and build clean. lint, 5 unit tests, `next build` pass; response headers (CSP, nosniff, HSTS, frame deny) checked against `next start`.
 - Schema, RLS, storage policies and seed: 100 SQL assertions pass on embedded Postgres (PGlite) via `npm run test:rls:local`. A deliberately broken policy is caught by the tests.
-- Next: 4.1 calendar-date utilities (pure logic with Vitest).
+- Next: 5.1 Ring component (SVG, states, reduced motion).
 
 ## Decisions
 - 2026-10-23: Style = Minimalism & Swiss, IBM Plex Sans, navy/gold palette. Reason: second generator query (narrower) fit dashboards and has low a11y risk; the first query returned Glassmorphism with a landing-page pattern. Rejected: Glassmorphism/Fira (blur hurts contrast, not a fit for dense ring grid).
@@ -16,6 +16,8 @@
 - 2026-10-23: Hosted Supabase dev project for SQL/RLS tests (no Docker); local Supabase documented as alternative.
 - 2026-10-24: SQL tests also run locally on PGlite (real Postgres in WASM) with small Supabase stubs, so RLS is verifiable with no account or Docker. Rejected: Docker-only `supabase start`.
 - 2026-10-24: purchase_history and reminder_log use a composite FK (item_id, user_id) to items(id, user_id), so a child row can never point at another user's item.
+- 2026-10-24: Reminder planner sends from local hour 8 onward (not only during hour 8), no back-filled offsets, one overdue notice within 30 days of the due date. Reason: tolerate late or retried runs; the reminder_log key prevents duplicates.
+- 2026-10-24: `price_cents` columns hold the currency's minor units (JPY has 0 decimals), via `minorUnitDigits`.
 - 2026-10-24: Migrations use numeric prefixes (0001_...) instead of timestamps.
 - 2026-10-23: Scheduler = Supabase pg_cron + Edge Function (tentative). Limits to be verified in task 11.1.
 
