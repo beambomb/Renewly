@@ -52,7 +52,7 @@ export default function RingGalleryPage() {
       <h2 className="mt-8 text-xl font-semibold text-foreground">{strings.dev.card}</h2>
       <ul className="mt-4 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
         {SAMPLES.map(({ input, logo, detail }) => (
-          <li key={input.name} className="rounded-lg border border-border bg-card p-4 shadow-sm">
+          <li key={input.name} className="rounded-lg border border-border bg-card p-4">
             <RingCard
               name={input.name}
               vm={computeRing(input, TODAY)}

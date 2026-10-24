@@ -4,6 +4,7 @@ import { Plus } from "lucide-react";
 import { DashboardBody, sectionCountsOf } from "@/components/dashboard/dashboard-body";
 import { SectionIcon } from "@/components/sections/section-icon";
 import { PRIMARY_BUTTON } from "@/components/form/fields";
+import { PageHeader } from "@/components/shell/page-header";
 import { getUserContext } from "@/lib/data/context";
 import { listItems } from "@/lib/data/items";
 import { filtersFromParams } from "@/lib/dashboard/url";
@@ -26,18 +27,10 @@ export default async function HomePage({ searchParams }: { searchParams: SearchP
 
   return (
     <div className="flex flex-col gap-6">
-      <div className="flex items-end justify-between gap-4">
-        <div>
-          <h1 className="text-[2rem] font-bold leading-tight text-foreground">{strings.dashboard.title}</h1>
-          <p className="text-muted-foreground">
-            {view.total === 1 ? strings.dashboard.summaryOne : strings.dashboard.summaryMany(view.total)}
-          </p>
-        </div>
-        <Link href="/add" className={`${PRIMARY_BUTTON} hidden sm:inline-flex`}>
-          <Plus aria-hidden="true" size={18} />
-          {strings.nav.add}
-        </Link>
-      </div>
+      <PageHeader
+        title={strings.dashboard.title}
+        lead={view.total === 1 ? strings.dashboard.summaryOne : strings.dashboard.summaryMany(view.total)}
+      />
 
       {view.total === 0 ? (
         <EmptyState />

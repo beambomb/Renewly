@@ -58,6 +58,29 @@ describe("decideAccess", () => {
     });
   });
 
+  it("forwards a sign-in code that landed on the site root to the callback", () => {
+    expect(decideAccess({ ...base, pathname: "/", search: "?code=abc-123" })).toEqual({
+      type: "redirect",
+      location: "/auth/callback?code=abc-123",
+    });
+    // also when already signed in, and the code is encoded safely
+    expect(decideAccess({ ...base, isAuthenticated: true, pathname: "/", search: "?code=a%26b" })).toEqual({
+      type: "redirect",
+      location: "/auth/callback?code=a%26b",
+    });
+  });
+
+  it("does not forward oversized codes or codes on other pages", () => {
+    const oversized = decideAccess({ ...base, pathname: "/", search: `?code=${"x".repeat(501)}` });
+    expect(oversized.type).toBe("redirect");
+    expect(oversized.type === "redirect" && oversized.location.startsWith("/sign-in")).toBe(true);
+    expect(decideAccess({ ...base, pathname: "/settings", search: "?code=abc" }).type).toBe("redirect");
+    expect(decideAccess({ ...base, pathname: "/settings", search: "?code=abc" })).toEqual({
+      type: "redirect",
+      location: "/sign-in?next=%2Fsettings%3Fcode%3Dabc",
+    });
+  });
+
   it("never exposes /dev pages in production", () => {
     expect(decideAccess({ ...base, pathname: "/dev/rings" })).toEqual({
       type: "redirect",

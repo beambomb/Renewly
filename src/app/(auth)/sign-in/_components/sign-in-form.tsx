@@ -12,7 +12,7 @@ export function SignInForm({ next, linkError }: { next: string; linkError: boole
 
   if (state.status === "sent") {
     return (
-      <div role="status" className="rounded-lg border border-border bg-card p-6 text-card-foreground shadow-sm">
+      <div role="status" className="rounded-lg border border-border bg-card p-6 text-card-foreground">
         <Mail aria-hidden="true" size={24} className="text-secondary" />
         <h2 className="mt-3 text-xl font-semibold">{strings.auth.sentTitle}</h2>
         <p className="mt-2 text-muted-foreground">{strings.auth.sentBody(state.email)}</p>

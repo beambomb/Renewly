@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { DashboardBody, sectionCountsOf } from "@/components/dashboard/dashboard-body";
+import { PageHeader } from "@/components/shell/page-header";
 import { sampleItems } from "@/lib/dashboard/sample";
 import { filtersFromParams } from "@/lib/dashboard/url";
 import { buildDashboard } from "@/lib/dashboard/view";
@@ -28,10 +29,7 @@ export default async function DashboardPreviewPage({ searchParams }: { searchPar
 
   return (
     <div className="flex flex-col gap-6">
-      <div>
-        <h1 className="text-[2rem] font-bold leading-tight text-foreground">{strings.dev.previewTitle}</h1>
-        <p className="text-muted-foreground">{strings.dev.previewLead}</p>
-      </div>
+      <PageHeader title={strings.dev.previewTitle} lead={strings.dev.previewLead} />
       <DashboardBody
         view={view}
         filters={filters}

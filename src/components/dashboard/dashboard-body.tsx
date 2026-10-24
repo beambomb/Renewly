@@ -24,9 +24,11 @@ interface Props {
 export function DashboardBody({ view, filters, sectionCounts, markDone, basePath = "/" }: Props) {
   return (
     <>
-      <div className="grid gap-3 md:grid-cols-2">
+      <div className="grid gap-4 lg:grid-cols-3">
         <MonthlyCost totals={view.monthlyTotals} />
-        <Upcoming entries={view.upcoming} />
+        <div className="lg:col-span-2">
+          <Upcoming entries={view.upcoming} />
+        </div>
       </div>
 
       <FilterBar filters={filters} categories={view.categories} counts={sectionCounts} basePath={basePath} />
@@ -44,7 +46,7 @@ export function DashboardBody({ view, filters, sectionCounts, markDone, basePath
           const group = view.groups.find((g) => g.kind === kind);
           if (!group) return null;
           return (
-            <section key={kind} aria-labelledby={`${kind}-heading`} className="flex flex-col gap-3">
+            <section key={kind} aria-labelledby={`${kind}-heading`} className="flex flex-col gap-4 border-t border-border pt-6">
               <h2 id={`${kind}-heading`} className="flex items-center gap-2 text-xl font-semibold text-foreground">
                 <span className="text-secondary">
                   <SectionIcon kind={kind} size={22} />

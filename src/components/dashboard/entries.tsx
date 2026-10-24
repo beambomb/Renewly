@@ -10,7 +10,7 @@ import { formatMoney } from "@/lib/money/money";
 import { strings } from "@/lib/strings";
 
 const CARD =
-  "block rounded-lg border border-border bg-card p-4 text-card-foreground shadow-sm transition-colors duration-[var(--duration-fast)] hover:bg-muted active:bg-muted cv-auto";
+  "block rounded-lg border border-border bg-card p-4 text-card-foreground transition-colors duration-[var(--duration-fast)] hover:bg-muted active:bg-muted cv-auto";
 
 function priceDetail(item: Item): ReactNode {
   if (item.kind === "subscription" && item.priceMinor !== null && item.currency && item.billingCycle) {
@@ -50,7 +50,7 @@ export function ReminderRow({
   const { item, ring } = entry;
   const canMarkDone = item.status === "active";
   return (
-    <div className="flex items-center gap-2 rounded-lg border border-border bg-card p-2 text-card-foreground shadow-sm cv-auto">
+    <div className="flex items-center gap-2 rounded-lg border border-border bg-card p-2 text-card-foreground cv-auto">
       <Link
         href={`/items/${item.id}`}
         className="flex min-h-14 min-w-0 flex-1 items-center gap-3 rounded-md p-1 hover:bg-muted"

@@ -1,6 +1,7 @@
 "use server";
 
 import { headers } from "next/headers";
+import { classifyAuthFailure, messageForFailure } from "@/lib/auth/errors";
 import { originFromHeaders } from "@/lib/request-origin";
 import { safeRedirectPath } from "@/lib/auth/redirect";
 import { signInSchema } from "@/lib/schemas/auth";
@@ -45,9 +46,15 @@ export async function requestMagicLink(_previous: SignInState, formData: FormDat
       email,
       options: origin ? { emailRedirectTo: `${origin}/auth/callback?next=${encodeURIComponent(next)}` } : {},
     });
-    if (error) return { status: "error", email, message: strings.auth.sendFailed };
+    if (error) {
+      const kind = classifyAuthFailure({ code: error.code, status: error.status });
+      // Code and status only: never the address, token or message text.
+      console.error("magic link failed", { kind, code: error.code, status: error.status });
+      return { status: "error", email, message: messageForFailure(kind) };
+    }
   } catch {
-    return { status: "error", email, message: strings.auth.sendFailed };
+    console.error("magic link failed", { kind: "unreachable" });
+    return { status: "error", email, message: messageForFailure("unreachable") };
   }
 
   return { status: "sent", email };

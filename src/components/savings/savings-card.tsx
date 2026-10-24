@@ -35,7 +35,7 @@ export function SavingsCard({ name, emoji, currency, progress, compact = false }
   const stateLabel = strings.savings.state[progress.state];
 
   return (
-    <div className="flex flex-col gap-3 rounded-lg border border-border bg-card p-4 text-card-foreground shadow-sm">
+    <div className="flex flex-col gap-3 rounded-lg border border-border bg-card p-4 text-card-foreground">
       <div className="flex items-center gap-3">
         <span className="grid size-10 shrink-0 place-items-center rounded-md bg-muted text-accent">
           {emoji ? (

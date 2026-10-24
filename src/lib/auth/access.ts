@@ -34,6 +34,15 @@ export function decideAccess(input: AccessInput): AccessDecision {
 
   if (!supabaseConfigured) return { type: "unconfigured" };
 
+  // If the callback URL is not in Supabase's Redirect URLs list, Supabase sends the
+  // person to the site root with ?code=... Pass it on to the login handler.
+  if (pathname === "/") {
+    const code = new URLSearchParams(search).get("code");
+    if (code && code.length <= 500) {
+      return { type: "redirect", location: `/auth/callback?code=${encodeURIComponent(code)}` };
+    }
+  }
+
   if (pathname === "/sign-in" && isAuthenticated) {
     return { type: "redirect", location: "/" };
   }

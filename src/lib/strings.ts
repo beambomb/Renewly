@@ -16,6 +16,7 @@ export const strings = {
   nav: {
     home: "Home",
     add: "Add",
+    addItem: "Add item",
     alerts: "Alerts",
     settings: "Settings",
     primaryLabel: "Primary",
@@ -32,6 +33,18 @@ export const strings = {
     submitting: "Sending...",
     invalidEmail: "Enter a valid email address, like name@example.com.",
     sendFailed: "We could not send the link. Wait a minute and try again.",
+    errors: {
+      rate_limited:
+        "Too many sign-in emails were sent. Supabase's built-in email allows only a few per hour. Wait and try again, or set up your own email sender (Authentication > SMTP Settings).",
+      not_authorized:
+        "Supabase's built-in email only delivers to members of your Supabase organisation. Use one of those addresses, or set up your own email sender (Authentication > SMTP Settings).",
+      signups_disabled:
+        "New accounts are turned off for this project. Turn on 'Allow new users to sign up' in Supabase (Authentication > Sign In / Providers), or use an existing account.",
+      invalid_email: "Supabase did not accept that email address. Check it and try again.",
+      smtp: "Supabase could not send the email. Check Authentication > SMTP Settings and the project logs.",
+      unreachable: "We could not reach Supabase. Check your internet connection and the project URL in .env.local.",
+      unknown: "We could not send the link. Try again, and check the Supabase Auth logs if it keeps failing.",
+    },
     linkFailed: "That sign-in link is invalid or has expired. Request a new one.",
     sentTitle: "Check your inbox",
     sentBody: (email: string) => `We sent a sign-in link to ${email}. Open it on this device to finish signing in.`,
@@ -149,6 +162,8 @@ export const strings = {
     emailHint: "In-app notifications are always on.",
   },
   dev: {
+    formTitle: "Form preview",
+    detailTitle: "Detail preview",
     previewTitle: "Dashboard preview",
     previewLead: "Development only. Demo data from all five sections on a fixed date (24 Oct 2026). Filters and search work.",
     ringsTitle: "Ring gallery",

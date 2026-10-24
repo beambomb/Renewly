@@ -16,7 +16,8 @@
     "test:rls": "node scripts/run-sql-tests.mjs",
     "test:rls:local": "node scripts/run-sql-tests.mjs --local",
     "check:env": "node scripts/check-env.mjs",
-    "db:migrate": "node scripts/apply-migrations.mjs"
+    "db:migrate": "node scripts/apply-migrations.mjs",
+    "check:auth": "node scripts/check-auth-settings.mjs"
   },
   "dependencies": {
     "@supabase/ssr": "0.12.7",
