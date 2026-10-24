@@ -51,6 +51,7 @@ Work strictly in order. Each task: objective, files, tests, manual check. Tick t
 - [x] **6.1 Supabase clients and middleware** (`@supabase/ssr`, session refresh) - tests: zod env validation.
 - [x] **6.2 Sign-in page and callback** (magic link, inline errors) - tests: email schema.
 - [x] **6.3 Profile bootstrap and settings** (timezone, currency, default offsets) - tests: settings schema.
+- [x] **6.5 Password sign-in** (replaces magic link; `signInWithPassword` server action) - tests: sign-in schema, auth error mapping, sign-in action, sign-in form.
 
 ## Phase 6: Sections and items (revised 2026-10-24: five fixed sections, see requirements R12-R14)
 

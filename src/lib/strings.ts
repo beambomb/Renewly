@@ -26,30 +26,25 @@ export const strings = {
   },
   auth: {
     signInTitle: "Sign in",
-    signInLead: "Enter your email and we will send you a sign-in link. No password needed.",
+    signInLead: "Enter your email and password.",
     emailLabel: "Email address",
-    emailHint: "We only use it to sign you in and to send reminders.",
-    submit: "Send sign-in link",
-    submitting: "Sending...",
+    passwordLabel: "Password",
+    showPassword: "Show password",
+    hidePassword: "Hide password",
+    submit: "Sign in",
+    submitting: "Signing in...",
     invalidEmail: "Enter a valid email address, like name@example.com.",
-    sendFailed: "We could not send the link. Wait a minute and try again.",
+    passwordRequired: "Enter your password.",
     errors: {
-      rate_limited:
-        "Too many sign-in emails were sent. Supabase's built-in email allows only a few per hour. Wait and try again, or set up your own email sender (Authentication > SMTP Settings).",
-      not_authorized:
-        "Supabase's built-in email only delivers to members of your Supabase organisation. Use one of those addresses, or set up your own email sender (Authentication > SMTP Settings).",
-      signups_disabled:
-        "New accounts are turned off for this project. Turn on 'Allow new users to sign up' in Supabase (Authentication > Sign In / Providers), or use an existing account.",
-      invalid_email: "Supabase did not accept that email address. Check it and try again.",
-      smtp: "Supabase could not send the email. Check Authentication > SMTP Settings and the project logs.",
+      invalid_credentials: "Email or password is incorrect.",
+      email_not_confirmed:
+        "This account is not confirmed yet. Confirm the user in Supabase (Authentication > Users).",
+      rate_limited: "Too many attempts. Wait a few minutes and try again.",
+      server: "Supabase had a problem signing you in. Try again in a moment.",
       unreachable: "We could not reach Supabase. Check your internet connection and the project URL in .env.local.",
-      unknown: "We could not send the link. Try again, and check the Supabase Auth logs if it keeps failing.",
+      unknown: "We could not sign you in. Try again.",
     },
-    linkFailed: "That sign-in link is invalid or has expired. Request a new one.",
-    sentTitle: "Check your inbox",
-    sentBody: (email: string) => `We sent a sign-in link to ${email}. Open it on this device to finish signing in.`,
-    useDifferentEmail: "Use a different email",
-    signOut: "Sign out",
+    linkFailed: "That sign-in link is invalid or has expired. Sign in with your password instead.",
   },
   item: {
     kinds: {

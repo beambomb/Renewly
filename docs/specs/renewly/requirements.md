@@ -4,10 +4,10 @@ Format: user story, then acceptance criteria as "WHEN <situation> THE SYSTEM SHA
 Out of scope for v1: bank or email syncing, automatic currency conversion, sharing items, native apps, Google sign-in, favicon fetching.
 
 ## R1 Sign in
-As a user I sign in with an email magic link so I need no password.
-- WHEN I submit a valid email THE SYSTEM SHALL send a magic link and show a "check your inbox" message.
-- WHEN I submit an invalid email THE SYSTEM SHALL show an inline error next to the field and not call Supabase.
-- WHEN I open the magic link THE SYSTEM SHALL create a session and redirect me to the dashboard.
+As a user I sign in with my email and password (account created by hand in the Supabase dashboard; no sign-up or forgot-password screens).
+- WHEN I submit an invalid email or an empty password THE SYSTEM SHALL show an inline error next to the field and not call Supabase.
+- WHEN I submit correct credentials THE SYSTEM SHALL create a session and redirect me to the requested same-origin relative path, or to the dashboard.
+- WHEN I submit wrong credentials THE SYSTEM SHALL show the generic message "Email or password is incorrect." without revealing whether the email exists.
 - WHEN I am signed out and open a protected route THE SYSTEM SHALL redirect me to the sign-in page.
 - WHEN I sign in for the first time THE SYSTEM SHALL create my profile with the browser timezone, default currency and default reminder offsets 7, 3, 1 and 0.
 

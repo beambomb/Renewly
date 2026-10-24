@@ -1,28 +1,22 @@
 "use client";
 
-import { useActionState } from "react";
-import { Mail } from "lucide-react";
+import { useActionState, useState } from "react";
+import { Eye, EyeOff } from "lucide-react";
 import { strings } from "@/lib/strings";
-import { requestMagicLink, type SignInState } from "../actions";
+import { signIn, type SignInState } from "../actions";
 
 const INITIAL: SignInState = { status: "idle" };
 
+const INPUT = "min-h-11 w-full rounded-md border border-muted-foreground bg-card text-card-foreground";
+
 export function SignInForm({ next, linkError }: { next: string; linkError: boolean }) {
-  const [state, formAction, pending] = useActionState(requestMagicLink, INITIAL);
+  const [state, formAction, pending] = useActionState(signIn, INITIAL);
+  const [showPassword, setShowPassword] = useState(false);
 
-  if (state.status === "sent") {
-    return (
-      <div role="status" className="rounded-lg border border-border bg-card p-6 text-card-foreground">
-        <Mail aria-hidden="true" size={24} className="text-secondary" />
-        <h2 className="mt-3 text-xl font-semibold">{strings.auth.sentTitle}</h2>
-        <p className="mt-2 text-muted-foreground">{strings.auth.sentBody(state.email)}</p>
-      </div>
-    );
-  }
-
-  const fieldError = state.status === "error" ? state.fieldError : undefined;
-  const message = state.status === "error" ? state.message : linkError ? strings.auth.linkFailed : undefined;
-  const email = state.status === "error" ? state.email : "";
+  const error = state.status === "error" ? state : undefined;
+  const message = error?.message ?? (linkError ? strings.auth.linkFailed : undefined);
+  const emailError = error?.emailError;
+  const passwordError = error?.passwordError;
 
   return (
     <form action={formAction} noValidate className="flex flex-col gap-4">
@@ -47,17 +41,48 @@ export function SignInForm({ next, linkError }: { next: string; linkError: boole
           autoCapitalize="none"
           spellCheck={false}
           required
-          defaultValue={email}
-          aria-invalid={fieldError ? true : undefined}
-          aria-describedby={fieldError ? "email-hint email-error" : "email-hint"}
-          className="min-h-11 rounded-md border border-muted-foreground bg-card px-3 text-card-foreground"
+          defaultValue={error?.email ?? ""}
+          aria-invalid={emailError ? true : undefined}
+          aria-describedby={emailError ? "email-error" : undefined}
+          className={`${INPUT} px-3`}
         />
-        <p id="email-hint" className="text-sm text-muted-foreground">
-          {strings.auth.emailHint}
-        </p>
-        {fieldError ? (
+        {emailError ? (
           <p id="email-error" role="alert" className="text-sm font-medium text-destructive">
-            {fieldError}
+            {emailError}
+          </p>
+        ) : null}
+      </div>
+
+      <div className="flex flex-col gap-2">
+        <label htmlFor="password" className="font-medium text-foreground">
+          {strings.auth.passwordLabel}
+        </label>
+        <div className="relative">
+          <input
+            id="password"
+            name="password"
+            type={showPassword ? "text" : "password"}
+            autoComplete="current-password"
+            autoCapitalize="none"
+            spellCheck={false}
+            required
+            aria-invalid={passwordError ? true : undefined}
+            aria-describedby={passwordError ? "password-error" : undefined}
+            className={`${INPUT} pl-3 pr-12`}
+          />
+          <button
+            type="button"
+            onClick={() => setShowPassword((visible) => !visible)}
+            aria-controls="password"
+            aria-label={showPassword ? strings.auth.hidePassword : strings.auth.showPassword}
+            className="absolute inset-y-0 right-0 inline-flex min-h-11 min-w-11 items-center justify-center text-muted-foreground"
+          >
+            {showPassword ? <EyeOff aria-hidden="true" size={20} /> : <Eye aria-hidden="true" size={20} />}
+          </button>
+        </div>
+        {passwordError ? (
+          <p id="password-error" role="alert" className="text-sm font-medium text-destructive">
+            {passwordError}
           </p>
         ) : null}
       </div>
