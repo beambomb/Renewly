@@ -29,10 +29,10 @@ interface AccessInput {
 export function decideAccess(input: AccessInput): AccessDecision {
   const { pathname, search, isAuthenticated, supabaseConfigured, isDevelopment } = input;
 
-  if (!supabaseConfigured) {
-    if (isDevelopment && (pathname === "/dev" || pathname.startsWith("/dev/"))) return { type: "allow" };
-    return { type: "unconfigured" };
-  }
+  // Development-only preview pages (never reachable in production builds).
+  if (isDevelopment && (pathname === "/dev" || pathname.startsWith("/dev/"))) return { type: "allow" };
+
+  if (!supabaseConfigured) return { type: "unconfigured" };
 
   if (pathname === "/sign-in" && isAuthenticated) {
     return { type: "redirect", location: "/" };

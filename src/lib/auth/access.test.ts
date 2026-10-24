@@ -45,10 +45,24 @@ describe("decideAccess", () => {
     expect(decideAccess({ ...base, pathname: "/dev/rings", supabaseConfigured: false })).toEqual({ type: "unconfigured" });
   });
 
-  it("only exposes /dev pages without configuration in development", () => {
+  it("only exposes /dev pages in development, with or without configuration", () => {
     const dev = { ...base, supabaseConfigured: false, isDevelopment: true };
     expect(decideAccess({ ...dev, pathname: "/dev/rings" })).toEqual({ type: "allow" });
     expect(decideAccess({ ...dev, pathname: "/devious" })).toEqual({ type: "unconfigured" });
     expect(decideAccess({ ...dev, pathname: "/" })).toEqual({ type: "unconfigured" });
+    // Configured and signed out: the preview page is still reachable in development.
+    expect(decideAccess({ ...base, isDevelopment: true, pathname: "/dev/rings" })).toEqual({ type: "allow" });
+    expect(decideAccess({ ...base, isDevelopment: true, pathname: "/settings" })).toEqual({
+      type: "redirect",
+      location: "/sign-in?next=%2Fsettings",
+    });
+  });
+
+  it("never exposes /dev pages in production", () => {
+    expect(decideAccess({ ...base, pathname: "/dev/rings" })).toEqual({
+      type: "redirect",
+      location: "/sign-in?next=%2Fdev%2Frings",
+    });
+    expect(decideAccess({ ...base, supabaseConfigured: false, pathname: "/dev/rings" })).toEqual({ type: "unconfigured" });
   });
 });
