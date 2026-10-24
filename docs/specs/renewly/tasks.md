@@ -63,7 +63,7 @@ Sections (fixed list for now): subscription, reminder, savings (tabungan), recur
   - Manual: `npm run test:rls:local`.
 
 - [x] **7.1 Item zod schemas and DB mapping for all five kinds** (shared client/server) - tests: each kind, invalid cases, https cancel link, IDR amounts.
-- [ ] **7.2 Date derivation and server actions** create/update/delete with derived `period_start`/`due_date` - tests: derivation per kind.
+- [x] **7.2 Date derivation and server actions** create/update/delete with derived `period_start`/`due_date` - tests: derivation per kind.
 - [ ] **7.3 Add flow: section picker sheet** (five large options, one-thumb)
 - [ ] **7.4 Subscription form**
 - [ ] **7.5 Recurring purchase form**

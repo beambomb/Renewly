@@ -186,6 +186,7 @@ export const strings = {
       note: "Note",
       noteHint: "Optional, for example Bonus or Monthly top-up.",
     },
+    startingNote: "Starting balance",
     submit: "Save",
     submitting: "Saving...",
     saved: "Savings updated.",

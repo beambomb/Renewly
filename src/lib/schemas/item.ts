@@ -123,7 +123,8 @@ function text(formData: FormData, key: string): string {
   return typeof value === "string" ? value : "";
 }
 
-function collectValues(formData: FormData): FormValues {
+/** The submitted text fields, so a failed save can refill the form. Files are ignored. */
+export function collectValues(formData: FormData): FormValues {
   const values: FormValues = {};
   for (const key of new Set(formData.keys())) {
     const all = formData.getAll(key).filter((v): v is string => typeof v === "string");
