@@ -59,6 +59,48 @@ function ratio(a, b) {
 }
 
 let failures = 0;
+
+// If the app stylesheet exists, its tokens must mirror the design doc.
+let css = null;
+try {
+  css = readFileSync(join(root, "src", "app", "globals.css"), "utf8");
+} catch {
+  console.log("skip  src/app/globals.css not found yet");
+}
+
+function parseCssBlock(source, opener) {
+  const start = source.indexOf(opener);
+  if (start === -1) return null;
+  const end = source.indexOf("}", start);
+  const tokens = {};
+  for (const m of source.slice(start, end).matchAll(/--color-([a-z-]+):\s*(#[0-9a-fA-F]{6})\s*;/g)) {
+    tokens[m[1]] = m[2].toLowerCase();
+  }
+  return tokens;
+}
+
+if (css) {
+  const mirrors = [
+    ["light", "@theme {", parseBlock(":root")],
+    ["dark (.dark)", "\n.dark {", parseBlock(".dark")],
+    ["dark (media)", ":root:not(.light) {", parseBlock(".dark")],
+  ];
+  for (const [label, opener, expected] of mirrors) {
+    const actual = parseCssBlock(css, opener);
+    if (!actual) {
+      console.error(`FAIL globals.css is missing the ${label} token block`);
+      failures++;
+      continue;
+    }
+    for (const [name, value] of Object.entries(expected)) {
+      if (actual[name] !== value) {
+        console.error(`FAIL globals.css [${label}] --color-${name} is ${actual[name]}, doc says ${value}`);
+        failures++;
+      }
+    }
+  }
+}
+
 for (const [theme, selector] of [["light", ":root"], ["dark", ".dark"]]) {
   const tokens = parseBlock(selector);
   for (const name of REQUIRED) {
