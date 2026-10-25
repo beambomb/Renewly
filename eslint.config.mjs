@@ -9,6 +9,8 @@ const config = [
       ".next/**",
       "node_modules/**",
       "design-reference/**",
+      ".kiro/skills/**",
+      ".taste-skill/**",
       "supabase/functions/**",
       "next-env.d.ts",
       "coverage/**",

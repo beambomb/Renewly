@@ -316,6 +316,58 @@ export const strings = {
       `${name}, ${label}, ${percentLeft} percent of the period left, status: ${state}`,
     ariaInactive: (name: string, label: string) => `${name}, ${label}`,
   },
+  landing: {
+    meta: {
+      title: "Renewly | Know before it runs out",
+      description:
+        "Track subscriptions, recurring purchases and warranties as rings that drain toward their date, with a reminder before each one.",
+    },
+    header: { home: "Renewly home" },
+    hero: {
+      headline: "Know before it runs out.",
+      lead: "Subscriptions, recurring purchases and warranties become rings that drain toward their date, with a reminder before each one.",
+      signIn: "Sign in",
+      howItWorks: "See how it works",
+      replay: "Replay example",
+      exampleNote: "Example items",
+      sequenceSummary: (name: string, from: number, to: number) =>
+        `Example: ${name} drains from ${from} days left to ${to} days left, then a reminder arrives.`,
+    },
+    demo: {
+      subscription: "Stream Plus",
+      recurring: "Coffee beans",
+      warranty: "Laptop warranty",
+    },
+    reminder: {
+      renewsIn: (name: string, days: number) =>
+        days === 0 ? `${name} renews today` : days === 1 ? `${name} renews tomorrow` : `${name} renews in ${days} days`,
+    },
+    tracks: {
+      heading: "Three kinds of date to watch",
+      subscription: {
+        sentence: "Know the day a plan renews.",
+        detail: "Every plan gets a ring. It empties toward the day you are billed.",
+      },
+      recurring: {
+        sentence: "Know when to buy again.",
+        detail: "Coffee, filters, refills. The ring empties as the stock does.",
+      },
+      warranty: {
+        sentence: "Know when cover ends.",
+        detail: "The ring runs down to the day the warranty stops, so a claim never comes too late.",
+      },
+    },
+    reminders: {
+      heading: "Reminders land before the date, not after.",
+      lead: "Pick how far ahead you want to hear about it. The ring and the reminder follow the same date.",
+      legend: "Remind me",
+      stops: { week: "7 days before", soon: "3 days before", day: "On the day" },
+    },
+    footer: {
+      signIn: "Sign in",
+      backToTop: "Back to top",
+    },
+  },
 } as const;
 
 export type Strings = typeof strings;

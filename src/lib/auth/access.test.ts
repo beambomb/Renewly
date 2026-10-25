@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { decideAccess, isPublicPath } from "./access";
 
-const base = { search: "", isAuthenticated: false, supabaseConfigured: true, isDevelopment: false };
+const base = { search: "", method: "GET", isAuthenticated: false, supabaseConfigured: true, isDevelopment: false };
 
 describe("isPublicPath", () => {
   it("allows sign-in, auth callbacks and PWA files", () => {
@@ -19,7 +19,7 @@ describe("isPublicPath", () => {
 
 describe("decideAccess", () => {
   it("sends signed-out users to sign-in and remembers where they were going", () => {
-    expect(decideAccess({ ...base, pathname: "/" })).toEqual({ type: "redirect", location: "/sign-in" });
+    expect(decideAccess({ ...base, pathname: "/alerts" })).toEqual({ type: "redirect", location: "/sign-in?next=%2Falerts" });
     expect(decideAccess({ ...base, pathname: "/items/42", search: "?tab=history" })).toEqual({
       type: "redirect",
       location: "/sign-in?next=%2Fitems%2F42%3Ftab%3Dhistory",
@@ -71,9 +71,10 @@ describe("decideAccess", () => {
   });
 
   it("does not forward oversized codes or codes on other pages", () => {
-    const oversized = decideAccess({ ...base, pathname: "/", search: `?code=${"x".repeat(501)}` });
-    expect(oversized.type).toBe("redirect");
-    expect(oversized.type === "redirect" && oversized.location.startsWith("/sign-in")).toBe(true);
+    expect(decideAccess({ ...base, pathname: "/", search: `?code=${"x".repeat(501)}` })).toEqual({
+      type: "rewrite",
+      location: "/welcome",
+    });
     expect(decideAccess({ ...base, pathname: "/settings", search: "?code=abc" }).type).toBe("redirect");
     expect(decideAccess({ ...base, pathname: "/settings", search: "?code=abc" })).toEqual({
       type: "redirect",

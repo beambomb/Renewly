@@ -163,6 +163,32 @@ Text pairs need 4.5:1, non-text (ring strokes, borders used as boundaries, focus
 - `next/font` for fonts. Colocate route-specific components in `_components/`.
 - shadcn/ui was NOT recommended by the generator for this query, so it is not used; plain Tailwind with tokens plus small hand-written primitives.
 
+## Landing page tokens
+
+The public landing page (`src/app/(marketing)/`) is always dark (`.dark` tokens), flat (no gradient, glow, blur, glass or shadow) and uses only the colour tokens above. Its extra tokens live in the plain `:root` block of `globals.css` (not `@theme`, so Tailwind never prunes them) and are consumed through `var(--...)` in `landing.css`. Landing section rhythm may use `--space-24` (96px) and `--space-40` (160px), which sit above the app spacing scale.
+
+| Token | Value | Used for |
+| --- | --- | --- |
+| `--text-display`, `--leading-display`, `--tracking-display` | `clamp(3rem, 7vw, 7rem)`, `0.95`, `-0.03em` | h1 |
+| `--text-section`, `--leading-section`, `--tracking-section` | `clamp(1.75rem, 3.6vw, 3.5rem)`, `1.1`, `-0.02em` | h2, track sentences, footer wordmark |
+| `--text-counter` | `calc(var(--text-display) * 1.6)` | hero day counter |
+| `--monogram-size` | `2.5rem` | monogram in the hero ring |
+| `--container-landing` | `90rem` | max content width |
+| `--space-24`, `--space-40` | `6rem`, `10rem` | section padding (phones, from 768px) |
+| `--ease-expo` | `cubic-bezier(0.16, 1, 0.3, 1)` | hero ring draw |
+| `--duration-hero-cycle`, `--delay-hero-start` | `4000ms`, `200ms` | hero ring sequence |
+| `--duration-pulse`, `--duration-chip`, `--delay-chip` | `700ms`, `500ms`, `300ms` | halo pulse, reminder chip arrival |
+| `--stagger-ring`, `--duration-switch` | `120ms`, `400ms` | satellite stagger, reminder stage ring change |
+| `--rise-distance`, `--rise-distance-sm` | `1rem`, `0.5rem` | rise-in distances |
+| `--halo-scale`, `--halo-opacity` | `1.12`, `0.55` | halo pulse |
+| `--hero-ring-size-sm/-md/-lg` | `112vw`, `clamp(24rem, min(90svh, 70vw), 48rem)`, `clamp(28rem, min(92svh, 52vw), 60rem)` | giant ring size per breakpoint |
+| `--hero-text-max`, `--hero-ring-bleed`, `--chip-max` | `48%`, `8%`, `70%` | hero layout |
+| `--ring-size-satellite`, `--ring-size-track`, `--ring-size-stage` | `6rem`, `10rem`, `20rem` | demo ring sizes |
+| `--band-min-height` | `max(20svh, 8.25rem)` | track band minimum height |
+| `--footer-arc-size`, `--footer-arc-size-lg` | `90vw`, `60vw` | footer arc width |
+
+Scoped motion exemption: the landing is a marketing surface. Two motions are presentational (the rise-in of the track sentences and the footer arc), both scroll-scrubbed, removed under reduced motion, and never hide content. Everything else on the page carries meaning (time passing, state change, a reminder arriving).
+
 ## Pre-delivery checklist (from the skill's `references/pro-rules.md`)
 
 Run before declaring done; result is recorded in NOTES.md and README.

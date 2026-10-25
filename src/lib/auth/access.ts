@@ -9,14 +9,20 @@ export function isPublicPath(pathname: string): boolean {
   );
 }
 
+/** Internal route of the public landing page. Reached only by a proxy rewrite from "/". */
+export const LANDING_INTERNAL_PATH = "/welcome";
+
 export type AccessDecision =
   | { type: "allow" }
   | { type: "redirect"; location: string }
+  | { type: "rewrite"; location: string }
   | { type: "unconfigured" };
 
 interface AccessInput {
   pathname: string;
   search: string;
+  /** HTTP method. Required so Server Action POSTs to "/" are never rewritten to the landing. */
+  method: string;
   isAuthenticated: boolean;
   supabaseConfigured: boolean;
   isDevelopment: boolean;
@@ -28,6 +34,7 @@ interface AccessInput {
  */
 export function decideAccess(input: AccessInput): AccessDecision {
   const { pathname, search, isAuthenticated, supabaseConfigured, isDevelopment } = input;
+  const method = input.method.toUpperCase();
 
   // Development-only preview pages (never reachable in production builds).
   if (isDevelopment && (pathname === "/dev" || pathname.startsWith("/dev/"))) return { type: "allow" };
@@ -43,8 +50,17 @@ export function decideAccess(input: AccessInput): AccessDecision {
     }
   }
 
+  // The landing has one public URL ("/"); direct hits on the internal route go there.
+  if (pathname === LANDING_INTERNAL_PATH || pathname.startsWith(`${LANDING_INTERNAL_PATH}/`)) {
+    return { type: "redirect", location: "/" };
+  }
+
   if (pathname === "/sign-in" && isAuthenticated) {
     return { type: "redirect", location: "/" };
+  }
+
+  if (pathname === "/" && !isAuthenticated && (method === "GET" || method === "HEAD")) {
+    return { type: "rewrite", location: LANDING_INTERNAL_PATH };
   }
   if (isPublicPath(pathname)) return { type: "allow" };
   if (isAuthenticated) return { type: "allow" };

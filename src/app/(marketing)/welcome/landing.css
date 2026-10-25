@@ -1,0 +1,882 @@
+/*
+ * Landing page styles. Flat solid state colours only. Tokens come from globals.css
+ * (docs/design-system.md, "Landing page tokens"). Every animation is declared inside a
+ * no-preference media query, so reduced motion gets the calm final state with no
+ * animation properties at all.
+ */
+
+@property --d {
+  syntax: "<integer>";
+  inherits: false;
+  initial-value: 3;
+}
+
+.landing-root {
+  position: relative;
+  overflow-x: clip;
+}
+
+.landing-frame {
+  width: 100%;
+  max-width: var(--container-landing);
+  margin-inline: auto;
+  padding-inline: 1rem;
+}
+
+@media (min-width: 768px) {
+  .landing-frame {
+    padding-inline: 1.5rem;
+  }
+}
+
+.landing-header {
+  position: absolute;
+  inset-inline: 0;
+  top: 0;
+  z-index: 3;
+  padding-block: 0.75rem;
+}
+
+/* Type */
+.landing-display {
+  font-size: var(--text-display);
+  line-height: var(--leading-display);
+  letter-spacing: var(--tracking-display);
+  font-weight: 700;
+  text-wrap: balance;
+}
+
+.landing-section-title {
+  font-size: var(--text-section);
+  line-height: var(--leading-section);
+  letter-spacing: var(--tracking-section);
+  font-weight: 600;
+  text-wrap: balance;
+}
+
+.landing-lead {
+  margin-top: 1.5rem;
+  max-width: 34rem;
+  font-size: 1.125rem;
+  color: var(--color-muted-foreground);
+  text-wrap: pretty;
+}
+
+.landing-note {
+  margin-top: 1rem;
+  font-size: 0.875rem;
+  color: var(--color-muted-foreground);
+}
+
+.landing-section {
+  padding-block: var(--space-24);
+}
+
+@media (min-width: 768px) {
+  .landing-section {
+    padding-block: var(--space-40);
+  }
+}
+
+/* The ring: one component, one geometry (a 100-unit box, pathLength 100) */
+.lr {
+  display: grid;
+  width: var(--lr-size, 100%);
+  max-width: 100%;
+  aspect-ratio: 1;
+}
+
+.lr > * {
+  grid-area: 1 / 1;
+}
+
+.lr__svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+  overflow: visible;
+}
+
+.lr__centre {
+  display: grid;
+  place-items: center;
+  min-width: 0;
+}
+
+.lr__track--off,
+.lr__dash--off {
+  opacity: 0;
+}
+
+.lr__halo {
+  transform-box: fill-box;
+  transform-origin: center;
+  opacity: 0;
+}
+
+.lr--satellite {
+  --lr-size: var(--ring-size-satellite);
+}
+
+.lr--track {
+  --lr-size: var(--ring-size-track);
+}
+
+.lr--stage {
+  --lr-size: var(--ring-size-stage);
+}
+
+/* Hero */
+.landing-hero {
+  --hero-ring-size: var(--hero-ring-size-sm);
+  position: relative;
+  min-height: 100vh;
+  min-height: 100svh;
+  overflow: clip;
+}
+
+.landing-hero__inner {
+  position: relative;
+  width: 100%;
+  max-width: var(--container-landing);
+  margin-inline: auto;
+  padding: 5rem 1rem 5rem;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 2.5rem;
+  align-content: start;
+}
+
+.landing-hero__text {
+  position: relative;
+  z-index: 1;
+}
+
+.landing-actions {
+  margin-top: 2rem;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem 1.5rem;
+}
+
+@media (max-width: 767px) {
+  .landing-actions > a:first-child {
+    flex: 1 1 100%;
+  }
+}
+
+.hero-ring {
+  position: relative;
+  width: var(--hero-ring-size);
+  aspect-ratio: 1;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.landing-hero__satellites {
+  position: relative;
+  z-index: 1;
+}
+
+.landing-satellites {
+  list-style: none;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.5rem 1rem;
+}
+
+.landing-satellite {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.75rem;
+}
+
+.landing-satellite__text {
+  min-width: 0;
+}
+
+.landing-hero__replay {
+  position: absolute;
+  right: 1rem;
+  bottom: 1rem;
+  z-index: 2;
+  display: inline-flex;
+  min-height: 2.75rem;
+  align-items: center;
+  gap: 0.5rem;
+  padding-inline: 1rem;
+  border-radius: var(--radius-full);
+  background: var(--color-card);
+  color: var(--color-foreground);
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: opacity var(--duration-press) linear;
+}
+
+.landing-hero__replay:active {
+  opacity: 0.8;
+}
+
+@media (min-width: 768px) {
+  .landing-hero {
+    --hero-ring-size: var(--hero-ring-size-md);
+  }
+
+  .landing-hero__inner {
+    padding-inline: 1.5rem;
+  }
+
+  .landing-satellites {
+    grid-template-columns: repeat(2, max-content);
+    gap: 1.5rem 3rem;
+  }
+
+  .landing-satellite {
+    flex-direction: row;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .landing-hero__replay {
+    right: 1.5rem;
+    bottom: 1.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .landing-hero {
+    --hero-ring-size: var(--hero-ring-size-lg);
+  }
+
+  .landing-hero__inner {
+    min-height: 100svh;
+    padding-block: 6rem 4rem;
+    grid-template-columns: minmax(0, var(--hero-text-max)) 1fr;
+    grid-template-rows: 1fr auto;
+    align-content: normal;
+  }
+
+  .landing-hero__text {
+    grid-column: 1;
+    grid-row: 1;
+    align-self: center;
+  }
+
+  .landing-hero__satellites {
+    grid-column: 1;
+    grid-row: 2;
+  }
+
+  .hero-ring {
+    position: absolute;
+    left: auto;
+    right: 0;
+    top: 50%;
+    transform: translate(var(--hero-ring-bleed), -50%);
+  }
+}
+
+/* Hero ring: the inner disc is a flat tone step; the chip is the one bright thing */
+.lr--hero .lr__centre {
+  margin: 10%;
+  border-radius: 50%;
+  background: var(--color-card);
+}
+
+.hero-centre {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  width: 100%;
+  min-width: 0;
+}
+
+.hero-mono {
+  font-size: var(--monogram-size);
+  line-height: 1;
+  font-weight: 600;
+  color: var(--color-muted-foreground);
+}
+
+.hero-count {
+  --d: 3;
+  counter-reset: d var(--d);
+  min-width: 2ch;
+  text-align: center;
+  font-size: var(--text-counter);
+  line-height: var(--leading-display);
+  letter-spacing: var(--tracking-display);
+  font-weight: 700;
+  color: var(--color-foreground);
+}
+
+.hero-count::before {
+  content: counter(d);
+}
+
+.hero-labels {
+  display: grid;
+  justify-items: center;
+}
+
+.hero-label {
+  grid-area: 1 / 1;
+}
+
+.hero-label--ok,
+.hero-label--soon {
+  opacity: 0;
+}
+
+.hero-chip {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  max-width: var(--chip-max);
+  margin-top: 0.5rem;
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius-full);
+  background: var(--color-primary);
+  color: var(--color-on-primary);
+  font-size: 0.875rem;
+  font-weight: 500;
+  line-height: 1.25;
+  text-align: left;
+  text-wrap: balance;
+}
+
+/* Tracks */
+.landing-band {
+  display: flex;
+  align-items: center;
+  min-height: var(--band-min-height);
+  padding-block: 2rem;
+}
+
+.landing-band__grid {
+  display: grid;
+  gap: 1.5rem;
+  align-items: center;
+}
+
+.landing-band__detail {
+  margin-top: 1rem;
+  max-width: 36rem;
+  color: var(--color-muted-foreground);
+}
+
+.landing-band__ring {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.landing-band__meta {
+  min-width: 0;
+}
+
+.landing-band__meta p:first-child {
+  margin-bottom: 0.25rem;
+}
+
+@media (min-width: 768px) {
+  .landing-band {
+    padding-block: 4rem;
+  }
+
+  .landing-band__grid {
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 3rem;
+  }
+
+  .landing-band__ring {
+    flex-direction: column;
+    text-align: center;
+  }
+}
+
+/* Reminders */
+.reminders__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 2.5rem;
+  grid-template-areas: "head" "stage" "stops";
+}
+
+.reminders__head {
+  grid-area: head;
+}
+
+.reminders__stops {
+  grid-area: stops;
+  display: grid;
+  gap: 0.75rem;
+  align-content: start;
+  border: 0;
+  padding: 0;
+  margin: 0;
+  min-width: 0;
+}
+
+.reminders__stage {
+  grid-area: stage;
+  display: grid;
+  place-items: center;
+  padding: 1rem;
+}
+
+@media (min-width: 768px) {
+  .reminders__stage {
+    padding: 2rem;
+  }
+}
+
+.reminders__stop label {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  min-height: 3rem;
+  padding-inline: 1.5rem;
+  background: var(--color-card);
+  color: var(--color-foreground);
+  font-weight: 500;
+  transition: background-color var(--duration-fast) linear, color var(--duration-fast) linear;
+}
+
+.reminders__input:checked + label {
+  background: var(--color-primary);
+  color: var(--color-on-primary);
+}
+
+.reminders__input:focus-visible + label {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+}
+
+@media (hover: hover) {
+  .reminders__input:not(:checked) + label:hover {
+    background: var(--color-border);
+  }
+}
+
+.reminders__panels {
+  display: grid;
+  place-items: center;
+  width: 100%;
+}
+
+.reminders__panel {
+  grid-area: 1 / 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.reminders__figure {
+  font-size: var(--text-counter);
+  line-height: var(--leading-display);
+  letter-spacing: var(--tracking-display);
+  font-weight: 700;
+}
+
+.reminders__chip {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  max-width: var(--chip-max);
+  margin-top: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: var(--color-background);
+  color: var(--color-foreground);
+  font-size: 0.875rem;
+  line-height: 1.25;
+  text-align: left;
+  text-wrap: balance;
+}
+
+.lr--stage .lr__centre {
+  padding: 12%;
+}
+
+.lr--stage .lr__arc {
+  stroke-dashoffset: var(--off, 90);
+  stroke: var(--hue, var(--color-status-urgent));
+  opacity: var(--arc-o, 1);
+  transition:
+    stroke-dashoffset var(--duration-switch) var(--ease-standard),
+    stroke var(--duration-fast) linear,
+    opacity var(--duration-fast) linear;
+}
+
+.lr--stage .lr__track {
+  opacity: var(--solid-o, 0);
+  transition: opacity var(--duration-fast) linear;
+}
+
+.lr--stage .lr__dash {
+  opacity: var(--dash-o, 1);
+  transition: opacity var(--duration-fast) linear;
+}
+
+/* Without :has() only the 3 day panel shows (the default stop). */
+.reminders__panel--week,
+.reminders__panel--day {
+  display: none;
+}
+
+@supports selector(:has(*)) {
+  .reminders__panel--week,
+  .reminders__panel--day {
+    display: flex;
+  }
+
+  .reminders__panel {
+    opacity: 0;
+    visibility: hidden;
+    transition:
+      opacity var(--duration-fast) linear,
+      visibility 0s linear var(--duration-fast);
+  }
+
+  .reminders:has(#stop-week:checked) .reminders__panel--week,
+  .reminders:has(#stop-soon:checked) .reminders__panel--soon,
+  .reminders:has(#stop-day:checked) .reminders__panel--day {
+    opacity: 1;
+    visibility: visible;
+    transition-delay: 0s;
+  }
+
+  .reminders:has(#stop-week:checked) {
+    --off: 76.67;
+    --hue: var(--color-status-soon);
+    --dash-o: 0;
+    --solid-o: 1;
+  }
+
+  .reminders:has(#stop-day:checked) {
+    --off: 100;
+    --arc-o: 0;
+  }
+}
+
+@media (min-width: 1024px) {
+  .reminders__grid {
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    grid-template-areas: "head stage" "stops stage";
+    column-gap: 4rem;
+    align-items: start;
+  }
+
+  .reminders__stage {
+    padding: 3rem;
+  }
+}
+
+/* Footer */
+.landing-footer {
+  position: relative;
+  overflow: clip;
+  padding-block: var(--space-24) calc(var(--footer-arc-size) * 0.8);
+}
+
+.landing-footer .lr--footer {
+  --lr-size: var(--footer-arc-size);
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  /* Mirrored so the arc runs through the visible, uncropped side. */
+  transform: translate(25%, 25%) scaleX(-1);
+}
+
+.lr--footer .lr__arc {
+  stroke: var(--color-primary);
+}
+
+.landing-footer__inner {
+  position: relative;
+  z-index: 1;
+}
+
+.landing-footer__tagline {
+  margin-top: 1rem;
+  max-width: 28rem;
+  color: var(--color-muted-foreground);
+}
+
+.landing-footer__links {
+  margin-top: 2rem;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem 1.5rem;
+}
+
+@media (min-width: 1024px) {
+  .landing-footer {
+    padding-block: var(--space-40);
+  }
+
+  .landing-footer .lr--footer {
+    --lr-size: var(--footer-arc-size-lg);
+  }
+}
+
+/* Motion: all of it lives here, so reduced motion gets no animation properties */
+@media (prefers-reduced-motion: no-preference) {
+  html:has(.landing-root) {
+    scroll-behavior: smooth;
+  }
+
+  .lr--hero .lr__arc {
+    animation:
+      hero-arc var(--duration-hero-cycle) linear var(--delay-hero-start) both,
+      hero-hue var(--duration-hero-cycle) linear var(--delay-hero-start) both;
+  }
+
+  .lr--hero .lr__track {
+    animation: hero-track-solid var(--duration-hero-cycle) linear var(--delay-hero-start) both;
+  }
+
+  .lr--hero .lr__dash {
+    animation: hero-track-dash var(--duration-hero-cycle) linear var(--delay-hero-start) both;
+  }
+
+  .lr--hero .lr__halo {
+    animation: hero-halo var(--duration-pulse) var(--ease-standard)
+      calc(var(--delay-hero-start) + var(--duration-hero-cycle)) forwards;
+  }
+
+  .hero-count {
+    animation: hero-count var(--duration-hero-cycle) linear var(--delay-hero-start) both;
+  }
+
+  .hero-label--ok {
+    animation: hero-label-ok var(--duration-hero-cycle) linear var(--delay-hero-start) both;
+  }
+
+  .hero-label--soon {
+    animation: hero-label-soon var(--duration-hero-cycle) linear var(--delay-hero-start) both;
+  }
+
+  .hero-label--final {
+    animation: hero-label-final var(--duration-hero-cycle) linear var(--delay-hero-start) both;
+  }
+
+  .hero-chip {
+    animation: hero-chip var(--duration-chip) var(--ease-standard)
+      calc(var(--delay-hero-start) + var(--duration-hero-cycle) + var(--delay-chip)) both;
+  }
+
+  .lr--satellite .lr__arc {
+    animation: lr-fill var(--duration-ring) var(--ease-standard)
+      calc(var(--delay-hero-start) + var(--stagger-ring) * var(--index, 0)) both;
+  }
+
+  .landing-hero[data-playing="false"] *,
+  .landing-hero[data-playing="false"] *::before,
+  .landing-hero[data-playing="false"] *::after {
+    animation-play-state: paused;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .landing-hero__replay {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  @supports (animation-timeline: view()) {
+    .lr--scrub {
+      view-timeline: --ring block;
+    }
+
+    .lr--scrub .lr__arc {
+      animation: lr-fill linear both;
+      animation-timeline: --ring;
+      animation-range: entry 15% entry 100%;
+    }
+
+    .landing-band {
+      view-timeline: --band block;
+    }
+
+    .landing-band__copy {
+      animation: band-in linear both;
+      animation-timeline: --band;
+      animation-range: entry 0% entry 55%;
+    }
+
+    .landing-footer {
+      view-timeline: --foot block;
+    }
+
+    .lr--footer .lr__arc {
+      animation: lr-fill linear both;
+      animation-timeline: --foot;
+      animation-range: entry 0% cover 60%;
+    }
+  }
+}
+
+@keyframes hero-arc {
+  0% {
+    stroke-dashoffset: 100;
+    animation-timing-function: var(--ease-expo);
+  }
+
+  17.5% {
+    stroke-dashoffset: 0;
+    animation-timing-function: linear;
+  }
+
+  25% {
+    stroke-dashoffset: 0;
+  }
+
+  70% {
+    stroke-dashoffset: 70;
+  }
+
+  94%,
+  100% {
+    stroke-dashoffset: 90;
+  }
+}
+
+/* Hard steps, never a blend: the stroke is only ever one of the state colours. */
+@keyframes hero-hue {
+  0% {
+    stroke: var(--color-status-ok);
+    animation-timing-function: step-end;
+  }
+
+  70% {
+    stroke: var(--color-status-soon);
+    animation-timing-function: step-end;
+  }
+
+  94%,
+  100% {
+    stroke: var(--color-status-urgent);
+  }
+}
+
+@keyframes hero-count {
+  0%,
+  25% {
+    --d: 30;
+  }
+
+  70% {
+    --d: 9;
+  }
+
+  94%,
+  100% {
+    --d: 3;
+  }
+}
+
+@keyframes hero-label-ok {
+  0%,
+  68% {
+    opacity: 1;
+  }
+
+  72%,
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes hero-label-soon {
+  0%,
+  68% {
+    opacity: 0;
+  }
+
+  72%,
+  94% {
+    opacity: 1;
+  }
+
+  98%,
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes hero-label-final {
+  0%,
+  94% {
+    opacity: 0;
+  }
+
+  98%,
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes hero-track-solid {
+  0%,
+  94% {
+    opacity: 1;
+  }
+
+  98%,
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes hero-track-dash {
+  0%,
+  94% {
+    opacity: 0;
+  }
+
+  98%,
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes hero-halo {
+  from {
+    transform: scale(1);
+    opacity: var(--halo-opacity);
+  }
+
+  to {
+    transform: scale(var(--halo-scale));
+    opacity: 0;
+  }
+}
+
+@keyframes hero-chip {
+  from {
+    transform: translateY(var(--rise-distance));
+    opacity: 0;
+  }
+}
+
+@keyframes lr-fill {
+  from {
+    stroke-dashoffset: 100;
+  }
+}
+
+@keyframes band-in {
+  from {
+    opacity: 0;
+    transform: translateY(var(--rise-distance));
+  }
+}

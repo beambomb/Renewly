@@ -59,6 +59,12 @@
 - Placeholder pages (/add, /alerts, /settings) are filled in by tasks 6.3, 7.x and 11.6; the shell has no auth guard until task 6.1/6.2.
 
 - NOT verified (8.5): real signed-in Home with real data, the Settings save round trip, a screen reader pass, light scheme (screenshots were dark only), and whether the Settings/Alerts pages felt noisy to you in person (Alerts had one paragraph in code).
+## Landing page (added at the user's request, out of task order; uncommitted)
+- Signed-out GET/HEAD `/` is rewritten by the proxy to `/welcome` (`(marketing)` group, always dark). Signed-in `/` is still the dashboard. `/welcome` redirects to `/`. POST (Server Actions) to `/` is not rewritten. No RLS, schema or auth-flow change. `decideAccess` now requires `method`.
+- Design: one giant Renewly ring that draws, drains 30 to 3 days through ok/soon/urgent, pulses, then a reminder chip arrives. No gradient, glow, blur or shadow. Reduced motion shows the static end state.
+- Decisions: hero ring is 92svh/90svh (not 105svh) so the arc is never cropped vertically; only the right edge bleeds. Reminder chip in the hero is the primary colour pill. Footer arc is mirrored so it runs through the visible side. `robots.ts` added (app routes disallowed). Landing tokens are listed in `docs/design-system.md`.
+- NOT verified: tests, lint, `check:tokens`, real devices, CDN caching of the `/` rewrite on Vercel, screen reader pass, Safari/Firefox support for `@property` counter and scroll-driven arcs (static fallback by design). No new tests were written (user postponed them).
+
 ## How to resume
 1. Read `.kiro/steering/project.md`, this file, `docs/specs/renewly/tasks.md`.
 2. `git log --oneline` and `git status` to see where you are.

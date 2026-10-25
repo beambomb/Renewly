@@ -58,6 +58,43 @@
   --nav-height: 64px;
   /* Keeps scrolled content clear of the fixed bottom nav and the home indicator. */
   --content-bottom-pad: calc(var(--nav-height) + env(safe-area-inset-bottom) + 1.5rem);
+
+  /* Landing page tokens (documented in docs/design-system.md, "Landing page tokens"). */
+  --text-display: clamp(3rem, 7vw, 7rem);
+  --leading-display: 0.95;
+  --tracking-display: -0.03em;
+  --text-section: clamp(1.75rem, 3.6vw, 3.5rem);
+  --leading-section: 1.1;
+  --tracking-section: -0.02em;
+  --container-landing: 90rem;
+  --ease-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --duration-hero-cycle: 4000ms;
+  --delay-hero-start: 200ms;
+  --duration-pulse: 700ms;
+  --duration-chip: 500ms;
+  --stagger-ring: 120ms;
+  --duration-switch: 400ms;
+  --delay-chip: 300ms;
+  --space-24: 6rem;
+  --space-40: 10rem;
+  --rise-distance: 1rem;
+  --rise-distance-sm: 0.5rem;
+  --halo-scale: 1.12;
+  --halo-opacity: 0.55;
+  --hero-ring-size-sm: 112vw;
+  --hero-ring-size-md: clamp(24rem, min(90svh, 70vw), 48rem);
+  --hero-ring-size-lg: clamp(28rem, min(92svh, 52vw), 60rem);
+  --hero-text-max: 48%;
+  --hero-ring-bleed: 8%;
+  --chip-max: 70%;
+  --text-counter: calc(var(--text-display) * 1.6);
+  --monogram-size: 2.5rem;
+  --ring-size-satellite: 6rem;
+  --ring-size-track: 10rem;
+  --ring-size-stage: 20rem;
+  --band-min-height: max(20svh, 8.25rem);
+  --footer-arc-size: 90vw;
+  --footer-arc-size-lg: 60vw;
   color-scheme: light;
 }
 

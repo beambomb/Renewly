@@ -19,6 +19,7 @@ export async function updateSession(request: NextRequest): Promise<NextResponse>
     const decision = decideAccess({
       pathname,
       search,
+      method: request.method,
       isAuthenticated: false,
       supabaseConfigured: false,
       isDevelopment,
@@ -56,10 +57,19 @@ export async function updateSession(request: NextRequest): Promise<NextResponse>
   const decision = decideAccess({
     pathname,
     search,
+    method: request.method,
     isAuthenticated,
     supabaseConfigured: true,
     isDevelopment,
   });
+
+  if (decision.type === "rewrite") {
+    const rewrite = NextResponse.rewrite(new URL(decision.location, request.url), { request });
+    // Same URL serves two documents depending on the cookie, so no shared cache may keep it.
+    for (const cookie of response.cookies.getAll()) rewrite.cookies.set(cookie);
+    rewrite.headers.set("cache-control", "private, no-store");
+    return rewrite;
+  }
 
   if (decision.type === "redirect") {
     const redirect = NextResponse.redirect(new URL(decision.location, request.url));
