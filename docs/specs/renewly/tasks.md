@@ -82,6 +82,7 @@ Sections (fixed list for now): subscription, reminder, savings (tabungan), recur
 - [x] **8.3 Upcoming in 30 days + monthly cost summary**
 - [ ] **8.4 Performance check with 200 seeded items** (note measurements in NOTES.md)
 - [x] **8.5 Home sections cost figure + declutter**
+- [x] **8.6 Home section summary card** (leftmost card per section with name, count and monthly cost)
 
 ## Phase 8: Files
 

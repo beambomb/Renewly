@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { ReminderRow, RingEntry, SavingsEntry } from "@/components/dashboard/entries";
 import { FilterBar } from "@/components/dashboard/filter-bar";
-import { SectionHeader } from "@/components/dashboard/section-header";
+import { SectionSummary } from "@/components/dashboard/section-summary";
 import { Upcoming } from "@/components/dashboard/summary";
 import type { DashboardFilters, DashboardView } from "@/lib/dashboard/view";
 import { ITEM_KINDS } from "@/lib/items/types";
@@ -35,41 +35,53 @@ export function DashboardBody({ view, filters, sectionCounts, markDone, basePath
         ITEM_KINDS.map((kind) => {
           const group = view.groups.find((g) => g.kind === kind);
           if (!group) return null;
+          const summary = (className: string) => (
+            <SectionSummary kind={kind} count={group.entries.length} cost={group.cost} className={className} />
+          );
+          if (kind === "reminder" || kind === "savings") {
+            return (
+              <section
+                key={kind}
+                aria-labelledby={`${kind}-heading`}
+                className="grid gap-3 border-t border-border pt-6 xl:grid-cols-5"
+              >
+                {summary("xl:col-span-2 xl:self-start")}
+                {kind === "reminder" ? (
+                  <ul className="flex flex-col gap-2 xl:col-span-3">
+                    {group.entries.map((entry) =>
+                      entry.type === "time" ? (
+                        <li key={entry.item.id}>
+                          <ReminderRow entry={entry} markDone={markDone(entry.item.id)} />
+                        </li>
+                      ) : null,
+                    )}
+                  </ul>
+                ) : (
+                  <ul className="grid gap-3 sm:grid-cols-2 xl:col-span-3 xl:grid-cols-1 2xl:grid-cols-2">
+                    {group.entries.map((entry) =>
+                      entry.type === "savings" ? (
+                        <li key={entry.item.id}>
+                          <SavingsEntry entry={entry} />
+                        </li>
+                      ) : null,
+                    )}
+                  </ul>
+                )}
+              </section>
+            );
+          }
           return (
-            <section key={kind} aria-labelledby={`${kind}-heading`} className="flex flex-col gap-4 border-t border-border pt-6">
-              <SectionHeader kind={kind} count={group.entries.length} cost={group.cost} />
-
-              {kind === "reminder" ? (
-                <ul className="flex flex-col gap-2">
-                  {group.entries.map((entry) =>
-                    entry.type === "time" ? (
-                      <li key={entry.item.id}>
-                        <ReminderRow entry={entry} markDone={markDone(entry.item.id)} />
-                      </li>
-                    ) : null,
-                  )}
-                </ul>
-              ) : kind === "savings" ? (
-                <ul className="grid gap-3 sm:grid-cols-2">
-                  {group.entries.map((entry) =>
-                    entry.type === "savings" ? (
-                      <li key={entry.item.id}>
-                        <SavingsEntry entry={entry} />
-                      </li>
-                    ) : null,
-                  )}
-                </ul>
-              ) : (
-                <ul className={GRID}>
-                  {group.entries.map((entry) =>
-                    entry.type === "time" ? (
-                      <li key={entry.item.id}>
-                        <RingEntry entry={entry} />
-                      </li>
-                    ) : null,
-                  )}
-                </ul>
-              )}
+            <section key={kind} aria-labelledby={`${kind}-heading`} className={`${GRID} border-t border-border pt-6`}>
+              {summary(group.cost?.totals.length ? "col-span-2" : "col-span-2 self-start")}
+              <ul role="list" className="contents">
+                {group.entries.map((entry) =>
+                  entry.type === "time" ? (
+                    <li key={entry.item.id}>
+                      <RingEntry entry={entry} />
+                    </li>
+                  ) : null,
+                )}
+              </ul>
             </section>
           );
         })

@@ -202,6 +202,7 @@ export const strings = {
     noResultsTitle: "No matches",
     perCycle: { weekly: "per week", monthly: "per month", yearly: "per year", custom: "per cycle" },
     perMonthEstimate: "per month (est.)",
+    everyDays: (n: number) => (n === 1 ? "every day" : `every ${n} days`),
     markDone: "Done",
     markDoneFor: (name: string) => `Mark ${name} as done`,
   },

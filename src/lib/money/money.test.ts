@@ -113,6 +113,10 @@ describe("minor units and formatting", () => {
     expect(formatMoney(50_000_000, "IDR").replace(/\s/g, " ")).toBe("Rp 50.000.000");
   });
 
+  it("scales USD minor units once, so 36,525,000 reads as $365,250.00", () => {
+    expect(formatMoney(36_525_000, "USD")).toBe("$365,250.00");
+  });
+
   it("formats amounts", () => {
     expect(formatMoney(1549, "USD")).toBe("$15.49");
     expect(formatMoney(1200, "JPY")).toBe("¥1,200");

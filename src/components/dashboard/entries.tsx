@@ -12,12 +12,14 @@ import { strings } from "@/lib/strings";
 const CARD =
   "block rounded-lg border border-border bg-card p-4 text-card-foreground transition-colors duration-[var(--duration-fast)] hover:bg-muted active:bg-muted cv-auto";
 
-function priceDetail(item: Item): ReactNode {
+export function priceDetail(item: Item): ReactNode {
   if (item.kind === "subscription" && item.priceMinor !== null && item.currency && item.billingCycle) {
     return `${formatMoney(item.priceMinor, item.currency)} ${strings.dashboard.perCycle[item.billingCycle]}`;
   }
   if (item.kind === "recurring" && item.usualPriceMinor !== null && item.usualCurrency) {
-    return formatMoney(item.usualPriceMinor, item.usualCurrency);
+    const price = formatMoney(item.usualPriceMinor, item.usualCurrency);
+    // Cadence next to the price lets the section's per-month estimate be checked at a glance.
+    return item.durationDays ? `${price} ${strings.dashboard.everyDays(item.durationDays)}` : price;
   }
   if (item.kind === "warranty" && item.dueDate) return formatDisplayDate(item.dueDate);
   return undefined;

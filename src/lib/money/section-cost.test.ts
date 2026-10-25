@@ -65,6 +65,16 @@ describe("subscriptions", () => {
   });
 });
 
+describe("garbage in, garbage out", () => {
+  it("scales linearly with price and inversely with days, so a mistyped price or duration shows up as-is", () => {
+    // 12,000.00 USD every 1 day (a rupiah-sized price saved under USD with a 1-day duration).
+    const cost = sectionMonthlyCost("recurring", [recurring({ usualPriceMinor: 1_200_000, usualCurrency: "USD", durationDays: 1 })]);
+    expect(cost).toEqual({ totals: [{ currency: "USD", monthlyMinor: 36_525_000 }], estimated: true });
+    const sameRatio = sectionMonthlyCost("recurring", [recurring({ usualPriceMinor: 12_000_000, usualCurrency: "USD", durationDays: 10 })]);
+    expect(sameRatio).toEqual(cost);
+  });
+});
+
 describe("empty lists", () => {
   it("returns no totals for both costed kinds", () => {
     expect(sectionMonthlyCost("subscription", [])).toEqual({ totals: [], estimated: false });
