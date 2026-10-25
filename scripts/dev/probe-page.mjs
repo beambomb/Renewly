@@ -1,8 +1,8 @@
-// Usage: node scripts/probe-page.mjs <url> <needle> [<needle> ...]
+// Usage: node scripts/dev/probe-page.mjs <url> <needle> [<needle> ...]
 // Fetches a page and reports whether each needle appears in the HTML.
 const [url, ...needles] = process.argv.slice(2);
 if (!url) {
-  console.error("usage: node scripts/probe-page.mjs <url> <needle>...");
+  console.error("usage: node scripts/dev/probe-page.mjs <url> <needle>...");
   process.exit(2);
 }
 

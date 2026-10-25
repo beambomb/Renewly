@@ -80,3 +80,4 @@
 2. `git log --oneline` and `git status` to see where you are.
 3. Run `node scripts/check-design-tokens.mjs`; after task 2.1 use `npm test`, `npm run lint`, `npm run build`.
 4. Continue with the first unticked task in tasks.md.
+5. Dev-only routes, screenshot/probe scripts (`scripts/dev/`), env/db scripts and secrets rules: `docs/dev-tools.md`.

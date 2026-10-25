@@ -1,8 +1,8 @@
-// Usage: node scripts/probe-status.mjs <url> [expectedStatus] [expectedLocationPrefix]
+// Usage: node scripts/dev/probe-status.mjs <url> [expectedStatus] [expectedLocationPrefix]
 // Fetches without following redirects and prints status and Location.
 const [url, expectedStatus, expectedLocation] = process.argv.slice(2);
 if (!url) {
-  console.error("usage: node scripts/probe-status.mjs <url> [status] [locationPrefix]");
+  console.error("usage: node scripts/dev/probe-status.mjs <url> [status] [locationPrefix]");
   process.exit(2);
 }
 
