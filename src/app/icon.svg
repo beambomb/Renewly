@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <style>
+    .bg { fill: #F8FAFC; }
+    .arc { stroke: #0F172A; }
+    .dot { fill: #15803D; }
+    @media (prefers-color-scheme: dark) {
+      .bg { fill: #0F172A; }
+      .arc { stroke: #F8FAFC; }
+      .dot { fill: #4ADE80; }
+    }
+  </style>
+  <rect class="bg" width="64" height="64" rx="14"/>
+  <path class="arc" d="M32 12A20 20 0 1 1 14.68 22" fill="none" stroke-width="9" stroke-linecap="round"/>
+  <circle class="dot" cx="14.68" cy="22" r="6.5"/>
+</svg>

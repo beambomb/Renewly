@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { callbackParamsSchema, confirmParamsSchema, signInSchema } from "./auth";
+import { callbackParamsSchema, confirmParamsSchema, signInSchema, signUpSchema } from "./auth";
 
 describe("signInSchema", () => {
   const password = "not-a-real-password";
@@ -53,6 +53,39 @@ describe("signInSchema", () => {
 
   it("rejects an overly long next path", () => {
     expect(signInSchema.safeParse({ email: "a@example.com", password, next: `/${"a".repeat(500)}` }).success).toBe(false);
+  });
+});
+
+describe("signUpSchema", () => {
+  const valid = { email: "a@example.com", password: "long-enough-pw", confirmPassword: "long-enough-pw" };
+
+  it("accepts matching passwords and normalises the email", () => {
+    const result = signUpSchema.safeParse({ ...valid, email: "  Name@Example.COM " });
+    expect(result.success && result.data.email).toBe("name@example.com");
+  });
+
+  it("flags a mismatch on the confirm field", () => {
+    const result = signUpSchema.safeParse({ ...valid, confirmPassword: "something-else" });
+    expect(!result.success && result.error.issues.map((issue) => issue.path[0])).toEqual(["confirmPassword"]);
+  });
+
+  it("enforces 8 to 72 characters without trimming", () => {
+    const pair = (password: string) => signUpSchema.safeParse({ ...valid, password, confirmPassword: password }).success;
+    expect(pair("1234567")).toBe(false);
+    expect(pair("12345678")).toBe(true);
+    expect(pair("        ")).toBe(true);
+    expect(pair("p".repeat(72))).toBe(true);
+    expect(pair("p".repeat(73))).toBe(false);
+  });
+
+  it("rejects invalid or overly long emails", () => {
+    expect(signUpSchema.safeParse({ ...valid, email: "nope" }).success).toBe(false);
+    expect(signUpSchema.safeParse({ ...valid, email: `${"a".repeat(250)}@example.com` }).success).toBe(false);
+  });
+
+  it("keeps an optional next path", () => {
+    const result = signUpSchema.safeParse({ ...valid, next: "/items/1" });
+    expect(result.success && result.data.next).toBe("/items/1");
   });
 });
 

@@ -5,13 +5,13 @@ const base = { search: "", method: "GET", isAuthenticated: false, supabaseConfig
 
 describe("isPublicPath", () => {
   it("allows sign-in, auth callbacks and PWA files", () => {
-    for (const path of ["/sign-in", "/auth/callback", "/auth/confirm", "/manifest.webmanifest", "/sw.js", "/icons/icon-192.png", "/offline"]) {
+    for (const path of ["/sign-in", "/sign-up", "/auth/callback", "/auth/confirm", "/manifest.webmanifest", "/sw.js", "/icons/icon-192.png", "/offline"]) {
       expect(isPublicPath(path)).toBe(true);
     }
   });
 
   it("does not treat look-alike paths as public", () => {
-    for (const path of ["/", "/settings", "/sign-in-evil", "/authx/callback", "/sw.json", "/iconsx/a.png"]) {
+    for (const path of ["/", "/settings", "/sign-in-evil", "/sign-up-evil", "/authx/callback", "/sw.json", "/iconsx/a.png"]) {
       expect(isPublicPath(path)).toBe(false);
     }
   });
@@ -32,11 +32,22 @@ describe("decideAccess", () => {
 
   it("lets signed-out users reach the public pages", () => {
     expect(decideAccess({ ...base, pathname: "/sign-in" })).toEqual({ type: "allow" });
+    expect(decideAccess({ ...base, pathname: "/sign-up" })).toEqual({ type: "allow" });
     expect(decideAccess({ ...base, pathname: "/auth/callback" })).toEqual({ type: "allow" });
   });
 
-  it("moves signed-in users away from the sign-in page", () => {
-    expect(decideAccess({ ...base, pathname: "/sign-in", isAuthenticated: true })).toEqual({ type: "redirect", location: "/" });
+  it("moves signed-in users away from the sign-in and sign-up pages", () => {
+    for (const pathname of ["/sign-in", "/sign-up"]) {
+      expect(decideAccess({ ...base, pathname, isAuthenticated: true })).toEqual({ type: "redirect", location: "/" });
+    }
+  });
+
+  it("still protects app pages from signed-out visitors", () => {
+    expect(decideAccess({ ...base, pathname: "/alerts" })).toEqual({ type: "redirect", location: "/sign-in?next=%2Falerts" });
+    expect(decideAccess({ ...base, pathname: "/sign-up-evil" })).toEqual({
+      type: "redirect",
+      location: "/sign-in?next=%2Fsign-up-evil",
+    });
   });
 
   it("fails closed when Supabase is not configured", () => {

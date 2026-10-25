@@ -1,16 +1,15 @@
 "use client";
 
 import { useEffect, useRef, type ReactNode } from "react";
-import { RotateCcw } from "lucide-react";
 
 /** Safety net: if the observer never reports, the sequence keeps playing. */
 const OBSERVER_GIVE_UP_MS = 1500;
 
 /**
  * Behaviour only: pauses the hero sequence while the ring is off-screen or the tab is
- * hidden, and replays it on request. All markup arrives as server-rendered children.
+ * hidden. All markup arrives as server-rendered children.
  */
-export function HeroStage({ children, replayLabel }: { children: ReactNode; replayLabel: string }) {
+export function HeroStage({ children }: { children: ReactNode }) {
   const ref = useRef<HTMLElement>(null);
 
   useEffect(() => {
@@ -60,22 +59,9 @@ export function HeroStage({ children, replayLabel }: { children: ReactNode; repl
     };
   }, []);
 
-  const replay = () => {
-    const section = ref.current;
-    if (!section || typeof section.getAnimations !== "function") return;
-    for (const animation of section.getAnimations({ subtree: true })) {
-      animation.cancel();
-      animation.play();
-    }
-  };
-
   return (
     <section ref={ref} className="landing-hero" aria-labelledby="hero-title" data-playing="true">
       {children}
-      <button type="button" onClick={replay} className="landing-hero__replay">
-        <RotateCcw aria-hidden="true" size={16} strokeWidth={2} />
-        {replayLabel}
-      </button>
     </section>
   );
 }

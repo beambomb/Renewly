@@ -13,6 +13,7 @@ const plex = IBM_Plex_Sans({
 export const metadata: Metadata = {
   title: { default: strings.app.name, template: `%s | ${strings.app.name}` },
   description: strings.app.description,
+  appleWebApp: { capable: true, title: strings.app.name },
 };
 
 export const viewport: Viewport = {

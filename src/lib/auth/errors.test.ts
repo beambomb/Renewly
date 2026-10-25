@@ -18,6 +18,14 @@ describe("classifyAuthFailure", () => {
     expect(classifyAuthFailure({ status: 429 })).toBe("rate_limited");
   });
 
+  it("recognises sign-up outcomes", () => {
+    expect(classifyAuthFailure({ code: "user_already_exists", status: 422 })).toBe("email_exists");
+    expect(classifyAuthFailure({ code: "email_exists", status: 422 })).toBe("email_exists");
+    expect(classifyAuthFailure({ status: 422 })).toBe("email_exists");
+    expect(classifyAuthFailure({ code: "signup_disabled", status: 422 })).toBe("signup_disabled");
+    expect(classifyAuthFailure({ code: "weak_password", status: 422 })).toBe("weak_password");
+  });
+
   it("treats server errors as a provider problem", () => {
     expect(classifyAuthFailure({ status: 500 })).toBe("server");
     expect(classifyAuthFailure({ code: "unexpected_failure", status: 500 })).toBe("server");
@@ -41,6 +49,9 @@ describe("messageForFailure", () => {
       "invalid_credentials",
       "email_not_confirmed",
       "rate_limited",
+      "email_exists",
+      "signup_disabled",
+      "weak_password",
       "server",
       "unreachable",
       "unknown",

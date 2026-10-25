@@ -183,11 +183,17 @@ The public landing page (`src/app/(marketing)/`) is always dark (`.dark` tokens)
 | `--halo-scale`, `--halo-opacity` | `1.12`, `0.55` | halo pulse |
 | `--hero-ring-size-sm/-md/-lg` | `112vw`, `clamp(24rem, min(90svh, 70vw), 48rem)`, `clamp(28rem, min(92svh, 52vw), 60rem)` | giant ring size per breakpoint |
 | `--hero-text-max`, `--hero-ring-bleed`, `--chip-max` | `48%`, `8%`, `70%` | hero layout |
+| `--hero-handle-ratio`, `--hero-handle-min`, `--hero-handle-reach`, `--hero-handle-border` | `0.11`, `2.75rem`, `0.5rem`, `0.25rem` | drag handle: share of the ring, 44px minimum, extra hit area, rim width |
+| `--hero-hint-offset` | `14%` | "Drag the ring" hint, distance from the ring bottom |
 | `--ring-size-satellite`, `--ring-size-track`, `--ring-size-stage` | `6rem`, `10rem`, `20rem` | demo ring sizes |
 | `--band-min-height` | `max(20svh, 8.25rem)` | track band minimum height |
 | `--footer-arc-size`, `--footer-arc-size-lg` | `90vw`, `60vw` | footer arc width |
 
 Scoped motion exemption: the landing is a marketing surface. Two motions are presentational (the rise-in of the track sentences and the footer arc), both scroll-scrubbed, removed under reduced motion, and never hide content. Everything else on the page carries meaning (time passing, state change, a reminder arriving).
+
+## Brand mark
+
+A 300 degree round-capped ring arc with an end dot, flat, no gradient or shadow. Use `LogoMark` / `Brand` (`src/components/brand/`): arc follows `currentColor`, dot is `status-ok`. Minimum size 16px, clear space at least half the dot diameter; the wordmark is IBM Plex Sans semibold. Icon files in `public/icons/` are the only place with fixed colour values.
 
 ## Pre-delivery checklist (from the skill's `references/pro-rules.md`)
 

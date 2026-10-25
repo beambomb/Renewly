@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { LogoMark } from "@/components/brand/logo-mark";
 import { strings } from "@/lib/strings";
 import { LandingRing } from "./landing-ring";
 
@@ -7,7 +8,10 @@ export function LandingFooter() {
     <footer className="landing-footer bg-card">
       <LandingRing fraction={0.7} state="comfortable" decorative className="lr--footer" />
       <div className="landing-frame landing-footer__inner">
-        <p className="landing-section-title">{strings.app.name}</p>
+        <p className="landing-section-title inline-flex items-center gap-[0.3em]">
+          <LogoMark className="size-[1em] shrink-0 text-foreground" />
+          {strings.app.name}
+        </p>
         <p className="landing-footer__tagline">{strings.app.tagline}</p>
         <nav className="landing-footer__links" aria-label={strings.app.name}>
           <Link

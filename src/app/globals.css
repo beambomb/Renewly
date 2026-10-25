@@ -89,6 +89,11 @@
   --chip-max: 70%;
   --text-counter: calc(var(--text-display) * 1.6);
   --monogram-size: 2.5rem;
+  --hero-handle-ratio: 0.11;
+  --hero-handle-min: 2.75rem;
+  --hero-handle-reach: 0.5rem;
+  --hero-handle-border: 0.25rem;
+  --hero-hint-offset: 14%;
   --ring-size-satellite: 6rem;
   --ring-size-track: 10rem;
   --ring-size-stage: 20rem;

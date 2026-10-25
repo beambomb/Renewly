@@ -1,7 +1,7 @@
 import { safeRedirectPath } from "./redirect";
 
 /** Reachable without a session. Everything else requires sign-in. */
-const PUBLIC_PREFIXES = ["/sign-in", "/auth/", "/manifest.webmanifest", "/sw.js", "/icons/", "/offline"];
+const PUBLIC_PREFIXES = ["/sign-in", "/sign-up", "/auth/", "/manifest.webmanifest", "/sw.js", "/icons/", "/offline"];
 
 export function isPublicPath(pathname: string): boolean {
   return PUBLIC_PREFIXES.some((prefix) =>
@@ -55,7 +55,7 @@ export function decideAccess(input: AccessInput): AccessDecision {
     return { type: "redirect", location: "/" };
   }
 
-  if (pathname === "/sign-in" && isAuthenticated) {
+  if ((pathname === "/sign-in" || pathname === "/sign-up") && isAuthenticated) {
     return { type: "redirect", location: "/" };
   }
 

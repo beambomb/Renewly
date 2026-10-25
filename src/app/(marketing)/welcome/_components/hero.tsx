@@ -12,7 +12,7 @@ const copy = strings.landing.hero;
 
 export function Hero() {
   return (
-    <HeroStage replayLabel={copy.replay}>
+    <HeroStage>
       <div className="landing-hero__inner">
         <div className="landing-hero__text">
           <h1 id="hero-title" className="landing-display">

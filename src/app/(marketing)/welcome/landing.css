@@ -198,28 +198,6 @@
   min-width: 0;
 }
 
-.landing-hero__replay {
-  position: absolute;
-  right: 1rem;
-  bottom: 1rem;
-  z-index: 2;
-  display: inline-flex;
-  min-height: 2.75rem;
-  align-items: center;
-  gap: 0.5rem;
-  padding-inline: 1rem;
-  border-radius: var(--radius-full);
-  background: var(--color-card);
-  color: var(--color-foreground);
-  font-size: 0.875rem;
-  font-weight: 500;
-  transition: opacity var(--duration-press) linear;
-}
-
-.landing-hero__replay:active {
-  opacity: 0.8;
-}
-
 @media (min-width: 768px) {
   .landing-hero {
     --hero-ring-size: var(--hero-ring-size-md);
@@ -238,11 +216,6 @@
     flex-direction: row;
     align-items: center;
     gap: 1rem;
-  }
-
-  .landing-hero__replay {
-    right: 1.5rem;
-    bottom: 1.5rem;
   }
 }
 
@@ -319,6 +292,10 @@
   content: counter(d);
 }
 
+.hero-count {
+  font-variant-numeric: tabular-nums;
+}
+
 .hero-labels {
   display: grid;
   justify-items: center;
@@ -348,6 +325,105 @@
   line-height: 1.25;
   text-align: left;
   text-wrap: balance;
+}
+
+.hero-chip[data-shown="false"] {
+  visibility: hidden;
+}
+
+/* Drag: the handle rides the arc end. touch-action: none is on the handle only, so the
+   huge ring never traps page scroll; a finger on the track just taps. */
+.hero-ring {
+  --hue: var(--color-status-urgent);
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.hero-ring[data-state="comfortable"] {
+  --hue: var(--color-status-ok);
+}
+
+.hero-ring[data-state="soon"] {
+  --hue: var(--color-status-soon);
+}
+
+.hero-ring:not([data-ready]) :is(.hero-band, .hero-handle, .hero-hint) {
+  visibility: hidden;
+}
+
+.hero-band {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  pointer-events: none;
+}
+
+.hero-band circle {
+  stroke: transparent;
+  pointer-events: stroke;
+  cursor: pointer;
+}
+
+.hero-handle {
+  position: absolute;
+  width: max(var(--hero-handle-min), calc(var(--hero-ring-size) * var(--hero-handle-ratio)));
+  aspect-ratio: 1;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  cursor: grab;
+  touch-action: none;
+}
+
+.hero-handle::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  box-sizing: border-box;
+  border-radius: 50%;
+  border: var(--hero-handle-border) solid var(--hue);
+  background: var(--color-foreground);
+}
+
+/* Extends the hit area beyond the visible disc. */
+.hero-handle::after {
+  content: "";
+  position: absolute;
+  inset: calc(var(--hero-handle-reach) * -1);
+  border-radius: 50%;
+}
+
+@media (hover: hover) {
+  .hero-handle:hover::before {
+    opacity: 0.8;
+  }
+}
+
+.hero-ring[data-dragging="true"] .hero-handle {
+  cursor: grabbing;
+}
+
+.hero-ring[data-dragging="true"] .hero-handle::before {
+  border-color: var(--color-foreground);
+  background: var(--hue);
+}
+
+.hero-hint {
+  position: absolute;
+  left: 50%;
+  bottom: var(--hero-hint-offset);
+  transform: translateX(-50%);
+  font-size: 0.875rem;
+  line-height: 1.25;
+  white-space: nowrap;
+  color: var(--color-muted-foreground);
+  pointer-events: none;
+}
+
+.hero-hint[data-hidden="true"] {
+  opacity: 0;
+  visibility: hidden;
 }
 
 /* Tracks */
@@ -678,16 +754,29 @@
       calc(var(--delay-hero-start) + var(--stagger-ring) * var(--index, 0)) both;
   }
 
+  .hero-handle,
+  .hero-hint {
+    animation: hero-fade-in var(--duration-chip) linear
+      calc(var(--delay-hero-start) + var(--duration-hero-cycle) + var(--delay-chip) + var(--duration-chip)) both;
+  }
+
+  .hero-hint {
+    transition:
+      opacity var(--duration-fast) linear,
+      visibility 0s linear var(--duration-fast);
+  }
+
   .landing-hero[data-playing="false"] *,
   .landing-hero[data-playing="false"] *::before,
   .landing-hero[data-playing="false"] *::after {
     animation-play-state: paused;
   }
-}
 
-@media (prefers-reduced-motion: reduce) {
-  .landing-hero__replay {
-    display: none;
+  /* The visitor took over: drop the intro and let state drive the ring. */
+  .hero-ring[data-mode="manual"] *,
+  .hero-ring[data-mode="manual"] *::before,
+  .hero-ring[data-mode="manual"] *::after {
+    animation: none;
   }
 }
 
@@ -864,6 +953,12 @@
 @keyframes hero-chip {
   from {
     transform: translateY(var(--rise-distance));
+    opacity: 0;
+  }
+}
+
+@keyframes hero-fade-in {
+  from {
     opacity: 0;
   }
 }
